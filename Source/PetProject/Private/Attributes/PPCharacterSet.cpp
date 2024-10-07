@@ -1,10 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
-#include "Attributes/PPCharacterAttributeSet.h"
+#include "Attributes/PPCharacterSet.h"
 #include "GameplayEffectExtension.h"
 
-void UPPCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
+UPPCharacterSet::UPPCharacterSet()
+{
+
+}
+
+void UPPCharacterSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
 

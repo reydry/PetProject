@@ -11,7 +11,7 @@
 class UAbilitySystemComponent;
 class UGameplayAbility;
 class UGameplayEffect;
-class UPPCharacterAttributeSet;
+class UPPCharacterSet;
 class UPPInventoryComponent;
 class UPPCameraLockComponent;
 
@@ -29,18 +29,15 @@ public:
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-	UPPCharacterAttributeSet* GetAttributeSet() const;
+	UPPCharacterSet* GetAttributeSet() const;
 
 	UFUNCTION(BlueprintPure)
 	UPPInventoryComponent* GetInventoryComponent() const;
 
 protected:
-	virtual void BeginPlay() override;
-
 	void GiveAbilities();
 	void InitDelegates();
 	void InitAttributes();
-	void SetupPlayerState();
 
 	UFUNCTION(BlueprintCallable)
 	bool IsAbilityActive(TSubclassOf<UGameplayAbility> InAbilityClass);

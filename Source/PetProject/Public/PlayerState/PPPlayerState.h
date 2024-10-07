@@ -8,7 +8,8 @@
 
 #include "PPPlayerState.generated.h"
 
-class UPPCharacterAttributeSet;
+class UPPCharacterSet;
+class UPPSoulsSet;
 
 UCLASS()
 class PETPROJECT_API APPPlayerState : public APlayerState, public IAbilitySystemInterface
@@ -20,8 +21,6 @@ public:
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-	void SetupAbilitySystem();
-
 protected:
 	virtual void BeginPlay() override;
 
@@ -30,6 +29,8 @@ private:
 	UAbilitySystemComponent* AbilitySystemComponent;
 
 	UPROPERTY()
-	UPPCharacterAttributeSet* CharacterAttributeSet;
+	UPPCharacterSet* CharacterSet;
 	
+	UPROPERTY()
+	UPPSoulsSet* SoulsSet;
 };

@@ -6,7 +6,7 @@
 #include "GameFramework/PlayerState.h"
 #include "PlayerState/PPPlayerState.h"
 #include "AbilitySystemComponent.h"
-#include "Attributes/PPCharacterAttributeSet.h"
+#include "Attributes/PPCharacterSet.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PPInventoryComponent.h"
 #include "ItemData/PPItemData.h"
@@ -47,11 +47,6 @@ UPPInventoryComponent* APPPlayerCharacter::GetInventoryComponent() const
 	return InventoryComponent;
 }
 
-void APPPlayerCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
 void APPPlayerCharacter::GiveAbilities()
 {
 	UAbilitySystemComponent* AbilitySystem = GetAbilitySystemComponent();
@@ -74,7 +69,7 @@ void APPPlayerCharacter::GiveAbilities()
 void APPPlayerCharacter::InitDelegates()
 {
 	UAbilitySystemComponent* AbilitySystem = GetAbilitySystemComponent();
-	const UPPCharacterAttributeSet* AttributeSet = GetAttributeSet();
+	UPPCharacterSet* AttributeSet = GetAttributeSet();
 
 	if (!IsValid(AbilitySystem) || !IsValid(AttributeSet))
 	{
@@ -94,16 +89,6 @@ void APPPlayerCharacter::InitAttributes()
 	}
 
 	AbilitySystem->ApplyGameplayEffectToSelf(DefaultAttributes.GetDefaultObject(), 1, FGameplayEffectContextHandle());
-}
-
-void APPPlayerCharacter::SetupPlayerState()
-{
-	APPPlayerState* State = GetPlayerState<APPPlayerState>();
-
-	if (IsValid(State))
-	{
-		State->SetupAbilitySystem();
-	}
 }
 
 bool APPPlayerCharacter::IsAbilityActive(TSubclassOf<UGameplayAbility> InAbilityClass)
@@ -161,7 +146,6 @@ void APPPlayerCharacter::PossessedBy(AController* InController)
 {
 	Super::PossessedBy(InController);
 
-	SetupPlayerState();
 	GiveAbilities();
 	InitDelegates();
 	InitAttributes();
@@ -179,13 +163,13 @@ UAbilitySystemComponent* APPPlayerCharacter::GetAbilitySystemComponent() const
 	return nullptr;
 }
 
-UPPCharacterAttributeSet* APPPlayerCharacter::GetAttributeSet() const
+UPPCharacterSet* APPPlayerCharacter::GetAttributeSet() const
 {
 	UAbilitySystemComponent* AbilitySystem = GetAbilitySystemComponent();
 	
 	if (IsValid(AbilitySystem))
 	{
-		return const_cast<UPPCharacterAttributeSet*>(AbilitySystem->GetSet<UPPCharacterAttributeSet>());
+		return const_cast<UPPCharacterSet*>(AbilitySystem->GetSet<UPPCharacterSet>());
 	}
 
 	return nullptr;
