@@ -2,7 +2,7 @@
 
 #include "Components/PPCameraLockComponent.h"
 #include "Characters/PPPlayerCharacter.h"
-#include "Attributes/PPCharacterAttributeSet.h"
+#include "Attributes/PPCharacterSet.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -75,7 +75,7 @@ void UPPCameraLockComponent::SubscribeToDelegates()
 		return;
 	}
 
-	UPPCharacterAttributeSet* AttributeSet = Target->GetAttributeSet();
+	UPPCharacterSet* AttributeSet = Target->GetAttributeSet();
 
 	if (!IsValid(AttributeSet))
 	{
@@ -92,7 +92,7 @@ void UPPCameraLockComponent::UnSubscribeFromDelegates()
 		return;
 	}
 
-	UPPCharacterAttributeSet* AttributeSet = Target->GetAttributeSet();
+	UPPCharacterSet* AttributeSet = Target->GetAttributeSet();
 
 	if (!IsValid(AttributeSet))
 	{
