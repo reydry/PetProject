@@ -3,25 +3,19 @@
 
 #include "PlayerState/PPPlayerState.h"
 #include "AbilitySystemComponent.h"
-#include "Attributes/PPCharacterAttributeSet.h"
+#include "Attributes/PPSoulsSet.h"
+#include "Attributes/PPCharacterSet.h"
 
 APPPlayerState::APPPlayerState(const FObjectInitializer& ObjectInitializer)
 {
 	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>("AbilitySystemComponent");
-	CharacterAttributeSet = CreateDefaultSubobject<UPPCharacterAttributeSet>("AttributeSet");
+	CharacterSet = CreateDefaultSubobject<UPPCharacterSet>("CharacterSet");
+	SoulsSet = CreateDefaultSubobject<UPPSoulsSet>("SoulsSet");
 }
 
 UAbilitySystemComponent* APPPlayerState::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
-}
-
-void APPPlayerState::SetupAbilitySystem()
-{
-	if(IsValid(AbilitySystemComponent))
-	{
-		AbilitySystemComponent->AddAttributeSetSubobject(CharacterAttributeSet);
-	}
 }
 
 void APPPlayerState::BeginPlay()
