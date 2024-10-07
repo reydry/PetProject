@@ -17,4 +17,9 @@ void UPPCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMo
 			OnDeathDelegate.Broadcast();
 		}
 	}
+
+	if (Data.EvaluatedData.Attribute == GetStaminaAttribute())
+	{
+		SetStamina(FMath::Clamp(GetStamina(), 0.0f, GetMaxStamina()));
+	}
 }
