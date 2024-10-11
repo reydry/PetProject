@@ -19,6 +19,9 @@ class PETPROJECT_API UPPInventoryComponent : public UActorComponent
 public:	
 	UPPInventoryComponent();
 
+	UFUNCTION(BlueprintPure)
+	static UPPInventoryComponent* GetInventoryComponentFromActor(const AActor* InActor);
+
 	UFUNCTION(BlueprintCallable)
 	int32 AddItem(UPPItemData* Item);
 	

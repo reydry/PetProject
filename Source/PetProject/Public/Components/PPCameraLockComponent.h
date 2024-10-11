@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "PPCameraLockComponent.generated.h"
 
-class APPPlayerCharacter;
+class APPCharacter;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PETPROJECT_API UPPCameraLockComponent : public UActorComponent
@@ -49,7 +49,7 @@ private:
 	APawn* Owner;
 
 	UPROPERTY()
-	APPPlayerCharacter* Target;
+	APPCharacter* Target;
 
 	bool bLockOnTarget = false;
 

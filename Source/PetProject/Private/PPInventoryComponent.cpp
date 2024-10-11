@@ -2,12 +2,21 @@
 
 #include "PPInventoryComponent.h"
 #include "Weapons/PPBaseWeapon.h"
-#include "Characters/PPPlayerCharacter.h"
 #include "ItemData/PPItemData.h"
 
 UPPInventoryComponent::UPPInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+}
+
+UPPInventoryComponent* UPPInventoryComponent::GetInventoryComponentFromActor(const AActor* InActor)
+{
+	if (IsValid(InActor))
+	{
+		return InActor->FindComponentByClass<UPPInventoryComponent>();
+	}
+
+	return nullptr;
 }
 
 void UPPInventoryComponent::SetItem(int32 Index)

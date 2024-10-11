@@ -18,7 +18,3 @@ UAbilitySystemComponent* APPPlayerState::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
-void APPPlayerState::BeginPlay()
-{
-	Super::BeginPlay();
-}

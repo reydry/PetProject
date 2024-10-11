@@ -8,6 +8,7 @@
 
 class UInputMappingContext;
 class UInputAction;
+class UPPInventoryComponent;
 struct FInputActionValue;
 
 UCLASS()
@@ -35,4 +36,6 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
+
+	TObjectPtr<UPPInventoryComponent> InventoryComponent;
 };

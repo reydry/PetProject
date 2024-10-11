@@ -6,15 +6,9 @@
 #include "GameFramework/GameMode.h"
 #include "PPGameMode.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class PETPROJECT_API APPGameMode : public AGameMode
 {
 	GENERATED_BODY()
-	
-	
-	
-	
+
 };

@@ -9,6 +9,7 @@
 APPThirdPersonPlayerController::APPThirdPersonPlayerController()
 {
 	bShowMouseCursor = false;
+	InventoryComponent = CreateDefaultSubobject<UPPInventoryComponent>(TEXT("InventoryComponent"));
 }
 
 void APPThirdPersonPlayerController::BeginPlay()

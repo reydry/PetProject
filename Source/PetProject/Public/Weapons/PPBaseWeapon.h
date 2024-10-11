@@ -26,18 +26,12 @@ class PETPROJECT_API APPBaseWeapon : public AActor
 public:	
 	APPBaseWeapon();
 
-	virtual void Tick(float DeltaTime) override;
-
 	EWeaponType GetWeaponType() const;
 
 	UFUNCTION(BlueprintPure)
 	USkeletalMeshComponent* GetMesh();
 
 protected:
-	virtual void BeginPlay() override;
-
-	void InitWeapon();
-
 	UPROPERTY(EditDefaultsOnly)
 	EWeaponType WeaponType = EWeaponType::None;
 
