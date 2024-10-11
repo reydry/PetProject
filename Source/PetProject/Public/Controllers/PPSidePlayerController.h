@@ -18,8 +18,6 @@ class PETPROJECT_API APPSidePlayerController : public APlayerController
 public:
 	APPSidePlayerController();
 
-	virtual void Tick(float DeltaSeconds) override;
-
 protected:
 	virtual void BeginPlay() override;
 	
@@ -32,5 +30,4 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* Movement;
-
 };

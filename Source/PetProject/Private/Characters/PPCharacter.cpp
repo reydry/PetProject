@@ -145,16 +145,6 @@ void APPCharacter::CancelAbility(TSubclassOf<UGameplayAbility> InAbility)
 	}
 }
 
-void APPCharacter::OnHealthChanged(const FOnAttributeChangeData& Data)
-{
-	if (FMath::IsNearlyZero(Data.NewValue) && !bIsDummy)
-	{
-		Destroy();
-	}
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("health = %f"), Data.NewValue));
-}
-
 UAbilitySystemComponent* APPCharacter::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;

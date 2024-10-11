@@ -25,8 +25,6 @@ public:
 	virtual void PossessedBy(AController* InController) override;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-	void OnHealthChanged(const FOnAttributeChangeData& Data);
-
 protected:
 	void InitAbilitySystem();
 	void ApplyPassiveEffects();

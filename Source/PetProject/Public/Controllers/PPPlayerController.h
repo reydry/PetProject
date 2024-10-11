@@ -18,8 +18,6 @@ class PETPROJECT_API APPPlayerController : public APlayerController
 public:
 	APPPlayerController();
 
-	virtual void Tick(float DeltaSeconds) override;
-
 protected:
 	virtual void SetupInputComponent() override;
 

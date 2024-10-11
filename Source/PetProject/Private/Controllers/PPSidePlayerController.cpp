@@ -11,11 +11,6 @@ APPSidePlayerController::APPSidePlayerController()
 	bShowMouseCursor = false;
 }
 
-void APPSidePlayerController::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-}
-
 void APPSidePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
