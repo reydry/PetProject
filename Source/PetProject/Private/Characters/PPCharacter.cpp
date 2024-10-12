@@ -6,6 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/PPHealthComponent.h"
+#include "Components/PPCameraLockComponent.h"
 
 APPCharacter::APPCharacter()
 {
@@ -21,6 +22,7 @@ APPCharacter::APPCharacter()
 	GetCharacterMovement()->bSnapToPlaneAtStart = true;
 
 	HealthComponent = CreateDefaultSubobject<UPPHealthComponent>(TEXT("HealthComponent"));
+	CameraLockComponent = CreateDefaultSubobject<UPPCameraLockComponent>(TEXT("CameraLockComponent"));
 
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;

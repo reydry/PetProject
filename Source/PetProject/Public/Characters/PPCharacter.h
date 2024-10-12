@@ -13,6 +13,7 @@ class UGameplayAbility;
 class UGameplayEffect;
 class UPPCharacterSet;
 class UPPHealthComponent;
+class UPPCameraLockComponent;
 
 UCLASS()
 class PETPROJECT_API APPCharacter : public ACharacter, public IAbilitySystemInterface
@@ -67,4 +68,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<UGameplayEffect>> PermanentEffects;
+
+	UPROPERTY()
+	UPPCameraLockComponent* CameraLockComponent = nullptr;
 };

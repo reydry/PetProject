@@ -11,6 +11,16 @@ UPPCameraLockComponent::UPPCameraLockComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
+UPPCameraLockComponent* UPPCameraLockComponent::GetCameraLockComponentFromActor(const AActor* InActor)
+{
+	if (IsValid(InActor))
+	{
+		return InActor->FindComponentByClass<UPPCameraLockComponent>();
+	}
+
+	return nullptr;
+}
+
 void UPPCameraLockComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -118,12 +128,7 @@ void UPPCameraLockComponent::UnSubscribeFromDelegates()
 
 void UPPCameraLockComponent::UpdateCameraRotation()
 {
-	if (!IsValid(PlayerController) || !IsValid(Target) || !IsValid(Owner))
-	{
-		return;
-	}
-
-	if (!bLockOnTarget)
+	if ((!IsValid(PlayerController) || !IsValid(Target) || !IsValid(Owner)) && !bLockOnTarget)
 	{
 		return;
 	}

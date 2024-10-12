@@ -16,6 +16,9 @@ class PETPROJECT_API UPPCameraLockComponent : public UActorComponent
 public:	
 	UPPCameraLockComponent();
 
+	UFUNCTION(BlueprintPure)
+	static UPPCameraLockComponent* GetCameraLockComponentFromActor(const AActor* InActor);
+
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable)
