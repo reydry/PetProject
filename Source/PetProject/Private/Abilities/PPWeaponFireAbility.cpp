@@ -98,7 +98,14 @@ void UPPWeaponFireAbility::TraceBulletsInCartridge(FVector& StartTrace, FVector&
 
 UPPItemData* UPPWeaponFireAbility::GetWeaponData() const
 {
-	UPPInventoryComponent* PlayerInventory = UPPInventoryComponent::GetInventoryComponentFromActor(GetAvatarActorFromActorInfo());
+	APawn* Pawn = Cast<APawn>(GetAvatarActorFromActorInfo());
+
+	if (!IsValid(Pawn))
+	{
+		return nullptr;
+	}
+
+	UPPInventoryComponent* PlayerInventory = UPPInventoryComponent::GetInventoryComponentFromActor(Pawn->GetController());
 
 	if (IsValid(PlayerInventory))
 	{

@@ -22,19 +22,19 @@ protected:
 	virtual void SetupInputComponent() override;
 
 	virtual void BeginPlay() override;
-
-	void MoveInput(const FInputActionValue& InputActionValue);
+	
+	virtual void MoveInput(const FInputActionValue& InputActionValue);
 
 	UFUNCTION(BlueprintCallable)
-	void LookInput(const FInputActionValue& InputActionValue);
+	virtual void LookInput(const FInputActionValue& InputActionValue);
 
-private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputMappingContext* DefaultMappingContext;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputAction* Movement;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputAction* Look;
 };

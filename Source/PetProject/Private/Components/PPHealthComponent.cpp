@@ -42,17 +42,17 @@ void UPPHealthComponent::InitializeComponentData(UAbilitySystemComponent* InAbil
 void UPPHealthComponent::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
 	OnAttributeChangedDelegateHandle.Broadcast(Data.NewValue, CharacterSet->GetMaxHealth(), Data.Attribute.AttributeName);
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("health = %f"), Data.NewValue));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("health = %f"), Data.NewValue));
 }
 
 void UPPHealthComponent::OnManaChanged(const FOnAttributeChangeData& Data)
 {
 	OnAttributeChangedDelegateHandle.Broadcast(Data.NewValue, CharacterSet->GetMaxMana(), Data.Attribute.AttributeName);
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("mana = %f"), Data.NewValue));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("mana = %f"), Data.NewValue));
 }
 
 void UPPHealthComponent::OnStaminaChanged(const FOnAttributeChangeData& Data)
 {
 	OnAttributeChangedDelegateHandle.Broadcast(Data.NewValue, CharacterSet->GetMaxStamina(), Data.Attribute.AttributeName);
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("stamina = %f"), Data.NewValue));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("stamina = %f"), Data.NewValue));
 }

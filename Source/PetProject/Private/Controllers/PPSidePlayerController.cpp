@@ -11,30 +11,6 @@ APPSidePlayerController::APPSidePlayerController()
 	bShowMouseCursor = false;
 }
 
-void APPSidePlayerController::BeginPlay()
-{
-	Super::BeginPlay();
-
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-
-	if (Subsystem)
-	{
-		Subsystem->AddMappingContext(DefaultMappingContext, 0);
-	}
-}
-
-void APPSidePlayerController::SetupInputComponent()
-{
-	Super::SetupInputComponent();
-
-	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
-
-	if (IsValid(EnhancedInputComponent))
-	{
-		EnhancedInputComponent->BindAction(Movement, ETriggerEvent::Triggered, this, &ThisClass::MoveInput);
-	}
-}
-
 void APPSidePlayerController::MoveInput(const FInputActionValue& InputActionValue)
 {
 	APawn* MyPawn = GetPawn<APawn>();
