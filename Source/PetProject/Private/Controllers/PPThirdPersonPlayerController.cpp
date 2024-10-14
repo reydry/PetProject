@@ -9,34 +9,10 @@
 APPThirdPersonPlayerController::APPThirdPersonPlayerController()
 {
 	bShowMouseCursor = false;
+	InventoryComponent = CreateDefaultSubobject<UPPInventoryComponent>(TEXT("InventoryComponent"));
 }
 
-void APPThirdPersonPlayerController::BeginPlay()
-{
-	Super::BeginPlay();
-
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-
-	if (Subsystem)
-	{
-		Subsystem->AddMappingContext(DefaultMappingContext, 0);
-	}
-}
-
-void APPThirdPersonPlayerController::SetupInputComponent()
-{
-	Super::SetupInputComponent();
-
-	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
-
-	if (IsValid(EnhancedInputComponent))
-	{
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::Look);
-	}
-}
-
-void APPThirdPersonPlayerController::Move(const FInputActionValue& InputActionValue)
+void APPThirdPersonPlayerController::MoveInput(const FInputActionValue& InputActionValue)
 {
 	FVector2D MovementVector = InputActionValue.Get<FVector2D>();
 
@@ -56,7 +32,7 @@ void APPThirdPersonPlayerController::Move(const FInputActionValue& InputActionVa
 	}
 }
 
-void APPThirdPersonPlayerController::Look(const FInputActionValue& InputActionValue)
+void APPThirdPersonPlayerController::LookInput(const FInputActionValue& InputActionValue)
 {
 	FVector2D LookAxisVector = InputActionValue.Get<FVector2D>();
 

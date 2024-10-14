@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/PlayerController.h"
+#include "Controllers/PPPlayerController.h"
 #include "PPSidePlayerController.generated.h"
 
 class UInputMappingContext;
@@ -11,26 +11,13 @@ class UInputAction;
 struct FInputActionValue;
 
 UCLASS()
-class PETPROJECT_API APPSidePlayerController : public APlayerController
+class PETPROJECT_API APPSidePlayerController : public APPPlayerController
 {
 	GENERATED_BODY()
 	
 public:
 	APPSidePlayerController();
 
-	virtual void Tick(float DeltaSeconds) override;
-
 protected:
-	virtual void BeginPlay() override;
-	
-	virtual void SetupInputComponent() override;
-
-	void MoveInput(const FInputActionValue& InputActionValue);
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputMappingContext* DefaultMappingContext;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* Movement;
-
+	virtual void MoveInput(const FInputActionValue& InputActionValue) override;
 };

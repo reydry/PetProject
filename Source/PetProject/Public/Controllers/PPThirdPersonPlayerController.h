@@ -3,15 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/PlayerController.h"
+#include "Controllers/PPPlayerController.h"
 #include "PPThirdPersonPlayerController.generated.h"
 
 class UInputMappingContext;
 class UInputAction;
+class UPPInventoryComponent;
 struct FInputActionValue;
 
 UCLASS()
-class PETPROJECT_API APPThirdPersonPlayerController : public APlayerController
+class PETPROJECT_API APPThirdPersonPlayerController : public APPPlayerController
 {
 	GENERATED_BODY()
 	
@@ -19,20 +20,8 @@ public:
 	APPThirdPersonPlayerController();
 
 protected:
-	void BeginPlay() override;
-	
-	virtual void SetupInputComponent() override;
+	virtual void MoveInput(const FInputActionValue& InputActionValue) override;
+	virtual void LookInput(const FInputActionValue& InputActionValue) override;
 
-	void Move(const FInputActionValue& InputActionValue);
-	void Look(const FInputActionValue& InputActionValue);
-
-private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputMappingContext* DefaultMappingContext;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* MoveAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* LookAction;
+	TObjectPtr<UPPInventoryComponent> InventoryComponent;
 };

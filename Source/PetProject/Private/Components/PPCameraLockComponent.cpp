@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Components/PPCameraLockComponent.h"
-#include "Characters/PPPlayerCharacter.h"
+#include "Characters/PPCharacter.h"
 #include "Attributes/PPCharacterSet.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -9,6 +9,16 @@
 UPPCameraLockComponent::UPPCameraLockComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+}
+
+UPPCameraLockComponent* UPPCameraLockComponent::GetCameraLockComponentFromActor(const AActor* InActor)
+{
+	if (IsValid(InActor))
+	{
+		return InActor->FindComponentByClass<UPPCameraLockComponent>();
+	}
+
+	return nullptr;
 }
 
 void UPPCameraLockComponent::BeginPlay()
@@ -29,7 +39,7 @@ void UPPCameraLockComponent::SetTarget(AActor* InTarget)
 {
 	UnSubscribeFromDelegates();
 
-	Target = Cast<APPPlayerCharacter>(InTarget);
+	Target = Cast<APPCharacter>(InTarget);
 
 	SubscribeToDelegates();
 }
@@ -75,7 +85,14 @@ void UPPCameraLockComponent::SubscribeToDelegates()
 		return;
 	}
 
-	UPPCharacterSet* AttributeSet = Target->GetAttributeSet();
+	UAbilitySystemComponent* AbilitySystem = Target->GetAbilitySystemComponent();
+
+	if (!IsValid(AbilitySystem))
+	{
+		return;
+	}
+
+	UPPCharacterSet* AttributeSet = const_cast<UPPCharacterSet*>(AbilitySystem->GetSet<UPPCharacterSet>());
 
 	if (!IsValid(AttributeSet))
 	{
@@ -92,7 +109,14 @@ void UPPCameraLockComponent::UnSubscribeFromDelegates()
 		return;
 	}
 
-	UPPCharacterSet* AttributeSet = Target->GetAttributeSet();
+	UAbilitySystemComponent* AbilitySystem = Target->GetAbilitySystemComponent();
+
+	if (!IsValid(AbilitySystem))
+	{
+		return;
+	}
+
+	UPPCharacterSet* AttributeSet = const_cast<UPPCharacterSet*>(AbilitySystem->GetSet<UPPCharacterSet>());
 
 	if (!IsValid(AttributeSet))
 	{
@@ -104,12 +128,7 @@ void UPPCameraLockComponent::UnSubscribeFromDelegates()
 
 void UPPCameraLockComponent::UpdateCameraRotation()
 {
-	if (!IsValid(PlayerController) || !IsValid(Target) || !IsValid(Owner))
-	{
-		return;
-	}
-
-	if (!bLockOnTarget)
+	if ((!IsValid(PlayerController) || !IsValid(Target) || !IsValid(Owner)) && !bLockOnTarget)
 	{
 		return;
 	}
@@ -124,7 +143,7 @@ void UPPCameraLockComponent::UpdateCameraRotation()
 
 void UPPCameraLockComponent::InitComponents()
 {
-	APPPlayerCharacter* PlayerOwner = GetOwner<APPPlayerCharacter>();
+	APPCharacter* PlayerOwner = GetOwner<APPCharacter>();
 
 	if (IsValid(PlayerOwner))
 	{

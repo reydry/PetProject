@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "PPCameraLockComponent.generated.h"
 
-class APPPlayerCharacter;
+class APPCharacter;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PETPROJECT_API UPPCameraLockComponent : public UActorComponent
@@ -15,6 +15,9 @@ class PETPROJECT_API UPPCameraLockComponent : public UActorComponent
 
 public:	
 	UPPCameraLockComponent();
+
+	UFUNCTION(BlueprintPure)
+	static UPPCameraLockComponent* GetCameraLockComponentFromActor(const AActor* InActor);
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -49,7 +52,7 @@ private:
 	APawn* Owner;
 
 	UPROPERTY()
-	APPPlayerCharacter* Target;
+	APPCharacter* Target;
 
 	bool bLockOnTarget = false;
 

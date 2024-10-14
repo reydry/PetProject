@@ -2,7 +2,6 @@
 
 
 #include "Abilities/PPWeaponFireAbility.h"
-#include "Characters/PPPlayerCharacter.h"
 #include "ItemData/PPItemData.h"
 #include "PPInventoryComponent.h"
 
@@ -99,16 +98,18 @@ void UPPWeaponFireAbility::TraceBulletsInCartridge(FVector& StartTrace, FVector&
 
 UPPItemData* UPPWeaponFireAbility::GetWeaponData() const
 {
-	APPPlayerCharacter* Player = Cast<APPPlayerCharacter>(GetAvatarActorFromActorInfo());
+	APawn* Pawn = Cast<APawn>(GetAvatarActorFromActorInfo());
 
-	if (IsValid(Player))
+	if (!IsValid(Pawn))
 	{
-		UPPInventoryComponent* PlayerInventory = Player->GetInventoryComponent();
+		return nullptr;
+	}
 
-		if (IsValid(PlayerInventory))
-		{
-			return PlayerInventory->GetActiveItem();
-		}
+	UPPInventoryComponent* PlayerInventory = UPPInventoryComponent::GetInventoryComponentFromActor(Pawn->GetController());
+
+	if (IsValid(PlayerInventory))
+	{
+		return PlayerInventory->GetActiveItem();
 	}
 
 	return nullptr;

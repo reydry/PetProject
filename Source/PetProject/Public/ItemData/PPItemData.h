@@ -42,4 +42,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	int32 BulletsInCartridge = 1;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	int32 Count = 1;
 };

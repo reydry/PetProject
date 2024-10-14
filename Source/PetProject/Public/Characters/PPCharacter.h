@@ -6,55 +6,57 @@
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
 #include "GameplayAbilitySpec.h"
-#include "PPPlayerCharacter.generated.h"
+#include "PPCharacter.generated.h"
 
 class UAbilitySystemComponent;
 class UGameplayAbility;
 class UGameplayEffect;
 class UPPCharacterSet;
-class UPPInventoryComponent;
+class UPPHealthComponent;
 class UPPCameraLockComponent;
 
-UCLASS(Blueprintable)
-class PETPROJECT_API APPPlayerCharacter : public ACharacter, public IAbilitySystemInterface
+UCLASS()
+class PETPROJECT_API APPCharacter : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
 public:
-	APPPlayerCharacter();
-
-	void OnHealthChanged(const FOnAttributeChangeData& Data);
+	APPCharacter();
 
 	virtual void PossessedBy(AController* InController) override;
-
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-	UPPCharacterSet* GetAttributeSet() const;
-
-	UFUNCTION(BlueprintPure)
-	UPPInventoryComponent* GetInventoryComponent() const;
-
 protected:
-	void GiveAbilities();
-	void InitDelegates();
-	void InitAttributes();
+	void InitAbilitySystem();
+	void ApplyPassiveEffects();
+
+	UFUNCTION(BlueprintCallable)
+	void GiveAbility(TSubclassOf<UGameplayAbility> InAbility);
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveAbility(TSubclassOf<UGameplayAbility> InAbility);
+
+	void SetupAbilitySystem();
 
 	UFUNCTION(BlueprintCallable)
 	bool IsAbilityActive(TSubclassOf<UGameplayAbility> InAbilityClass);
 
 	UFUNCTION(BlueprintCallable)
 	void ActivateAbility(TSubclassOf<UGameplayAbility> InAbility);
-	
+
 	UFUNCTION(BlueprintCallable)
 	void CancelAbility(TSubclassOf<UGameplayAbility> InAbility);
-
-	UPROPERTY(BlueprintReadWrite)
-	UPPInventoryComponent* InventoryComponent;
 
 	UPROPERTY(EditDefaultsOnly)
 	bool bIsDummy = false;
 
 private:
+	UPROPERTY()
+	UAbilitySystemComponent* AbilitySystemComponent = nullptr;
+
+	UPROPERTY()
+	UPPHealthComponent* HealthComponent = nullptr;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<UGameplayAbility>> Abilities;
 
@@ -64,6 +66,9 @@ private:
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TMap<TSubclassOf<UGameplayAbility>, FGameplayAbilitySpecHandle> GivenAbilities;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
+	TArray<TSubclassOf<UGameplayEffect>> PermanentEffects;
+
 	UPROPERTY()
-	UPPCameraLockComponent* CameraLockComponent;
+	UPPCameraLockComponent* CameraLockComponent = nullptr;
 };
