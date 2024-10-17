@@ -22,6 +22,4 @@ public:
 protected:
 	virtual void MoveInput(const FInputActionValue& InputActionValue) override;
 	virtual void LookInput(const FInputActionValue& InputActionValue) override;
-
-	TObjectPtr<UPPInventoryComponent> InventoryComponent;
 };

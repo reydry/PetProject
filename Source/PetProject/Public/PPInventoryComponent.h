@@ -7,9 +7,64 @@
 #include "Weapons/PPBaseWeapon.h"
 #include "PPInventoryComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemChangedDelegate, int32, PrevIndex, int32, NextWeapon);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSlottedItemChangedDelegate, UPPItem*, Item, int32, SlotNumber);
 
-class UPPItemData;
+UENUM(BlueprintType)
+enum class EItemType : uint8
+{
+	None,
+	Weapon,
+	Consumable,
+	Spell,
+};
+
+USTRUCT(BlueprintType)
+struct FPPItemData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EItemType ItemType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 ItemCount;
+};
+
+USTRUCT(BlueprintType)
+struct FPPItemSlot
+{
+	GENERATED_BODY()
+
+	FPPItemSlot() : ItemType(EItemType::None), SlotNumber(-1) { }
+
+	FPPItemSlot(EItemType InItemType, int32 InSlotNumber) : ItemType(InItemType), SlotNumber(InSlotNumber) { }
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EItemType ItemType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 SlotNumber;
+
+	friend inline uint32 GetTypeHash(const FPPItemSlot& Key)
+	{
+		uint32 Hash = 0;
+
+		Hash = HashCombine(Hash, GetTypeHash(Key.ItemType));
+		Hash = HashCombine(Hash, (uint32)Key.SlotNumber);
+
+		return Hash;
+	}
+
+	bool operator==(const FPPItemSlot& Other) const
+	{
+		return ItemType == Other.ItemType && SlotNumber == Other.SlotNumber;
+	}
+
+	bool IsValid() const
+	{
+		return ItemType != EItemType::None && SlotNumber >= 0;
+	}
+};
 
 UCLASS(BlueprintType, Blueprintable)
 class PETPROJECT_API UPPInventoryComponent : public UActorComponent
@@ -23,40 +78,30 @@ public:
 	static UPPInventoryComponent* GetInventoryComponentFromActor(const AActor* InActor);
 
 	UFUNCTION(BlueprintCallable)
-	int32 AddItem(UPPItemData* Item);
+	void AddItem(UPPItem* Item, FPPItemData ItemData, bool bAutoSlot);
+
+	void SetSlottedItem(UPPItem* Item, FPPItemSlot ItemSlot);
 	
-	UFUNCTION(BlueprintCallable)
-	void RemoveItem(UPPItemData* Item);
+	void FillEmptySlotWithItem(UPPItem* Item);
 
 	UFUNCTION(BlueprintPure)
-	UPPItemData* GetActiveItem() const;
-
-	UFUNCTION(BlueprintCallable)
-	void SetItem(int32 Index);
-
-	UFUNCTION(BlueprintCallable)
-	UPPItemData* GetNextWeapon();
-
-	UFUNCTION(BlueprintCallable)
-	int32 GetNextWeaponIndex();
-
-	UFUNCTION(BlueprintPure)
-	int32 GetItemCount(UPPItemData* ItemData);
-
-	UFUNCTION(BlueprintPure)
-	TSubclassOf<APPBaseWeapon> GetWeaponActor() const;
-
-	UFUNCTION(BlueprintPure)
-	TSubclassOf<UGameplayAbility> GetGrantedAbility() const;
+	void GetSlottedItems(TArray<UPPItem*>& Items, EItemType ItemType);
 
 	UPROPERTY(BlueprintAssignable)
-	FOnItemChangedDelegate ActiveChangedDelegateHandle;
+	FOnSlottedItemChangedDelegate OnSlottedItemChangedDelegateHandle;
 
-	UFUNCTION(BlueprintPure)
-	UPPItemData* GetItemByIndex(int32 ItemIndex);
+protected:
+	virtual void BeginPlay() override;
+
+	void InitSlottedItems();
 
 private:
-	TMap<int32, UPPItemData*> InventoryData;
+	//non-equipped items
+	TMap<UPPItem*, FPPItemData> Inventory;
 	
-	int32 ActiveItemIndex = INDEX_NONE;
+	//equipped items
+	TMap<FPPItemSlot, UPPItem*> SlottedItems;
+
+	UPROPERTY(EditDefaultsOnly)
+	TMap<EItemType, int32> ItemSlotsPerType;
 };

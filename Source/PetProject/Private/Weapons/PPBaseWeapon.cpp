@@ -6,6 +6,7 @@ APPBaseWeapon::APPBaseWeapon()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
+	SetRootComponent(SkeletalMeshComponent);
 }
 
 EWeaponType APPBaseWeapon::GetWeaponType() const

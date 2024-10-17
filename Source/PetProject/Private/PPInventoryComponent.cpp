@@ -7,6 +7,7 @@
 UPPInventoryComponent::UPPInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bStartWithTickEnabled = false;
 }
 
 UPPInventoryComponent* UPPInventoryComponent::GetInventoryComponentFromActor(const AActor* InActor)
@@ -19,101 +20,84 @@ UPPInventoryComponent* UPPInventoryComponent::GetInventoryComponentFromActor(con
 	return nullptr;
 }
 
-void UPPInventoryComponent::SetItem(int32 Index)
+void UPPInventoryComponent::AddItem(UPPItem* Item, FPPItemData ItemData, bool bAutoSlot)
 {
-	int32 PrevIndex = ActiveItemIndex;
-	ActiveItemIndex = Index;
-	ActiveChangedDelegateHandle.Broadcast(PrevIndex, ActiveItemIndex);
-}
+	Inventory.Add(Item, ItemData);
 
-UPPItemData* UPPInventoryComponent::GetNextWeapon()
-{
-	return *InventoryData.Find(GetNextWeaponIndex());
-}
-
-int32 UPPInventoryComponent::GetNextWeaponIndex()
-{
-	//TODO: rewrite using Iterator
-	int32 Index = ActiveItemIndex + 1; 
-
-	if (Index > InventoryData.Num() - 1)
+	if (bAutoSlot)
 	{
-		return 0;
+		FillEmptySlotWithItem(Item);
+	}
+}
+
+void UPPInventoryComponent::SetSlottedItem(UPPItem* Item, FPPItemSlot ItemSlot)
+{
+	for (TPair<FPPItemSlot, UPPItem*>& Elem : SlottedItems)
+	{
+		if (Elem.Key == ItemSlot)
+		{
+			Elem.Value = Item;
+		}
+		//else if (IsValid(Item) && Elem.Value == Item)
+		//{
+		//	Elem.Value = nullptr;
+		//}
+	}
+}
+
+void UPPInventoryComponent::FillEmptySlotWithItem(UPPItem* Item)
+{
+	FPPItemSlot ItemSlot;
+
+	for (TPair<FPPItemSlot, UPPItem*>& Elem : SlottedItems)
+	{
+		if (Elem.Key.ItemType == Item->ItemType)
+		{
+			if (Elem.Value == Item)
+			{
+				return;
+			}
+			else if (Elem.Value == nullptr && (!ItemSlot.IsValid() || ItemSlot.SlotNumber > Elem.Key.SlotNumber))
+			{
+				ItemSlot = Elem.Key;
+				break;
+			}
+		}
 	}
 
-	return Index;
-}
-
-int32 UPPInventoryComponent::GetItemCount(UPPItemData* ItemData)
-{
-	return 0;
-}
-
-TSubclassOf<APPBaseWeapon> UPPInventoryComponent::GetWeaponActor() const
-{
-	if (ActiveItemIndex == INDEX_NONE)
+	if (ItemSlot.IsValid())
 	{
-		return TSubclassOf<APPBaseWeapon>();
+		SlottedItems[ItemSlot] = Item;
 	}
-
-	auto Item = *InventoryData.Find(ActiveItemIndex);
 	
-	return Item->ItemActor;
+	OnSlottedItemChangedDelegateHandle.Broadcast(Item, ItemSlot.SlotNumber);
 }
 
-TSubclassOf<UGameplayAbility> UPPInventoryComponent::GetGrantedAbility() const
+void UPPInventoryComponent::GetSlottedItems(TArray<UPPItem*>& Items, EItemType ItemType)
 {
-	if (ActiveItemIndex == INDEX_NONE)
+	for (TPair<FPPItemSlot, UPPItem*>& Elem : SlottedItems)
 	{
-		return TSubclassOf<UGameplayAbility>();
+		if (Elem.Key.ItemType == ItemType)
+		{
+			Items.Add(Elem.Value);
+		}
 	}
-
-	auto Item = *InventoryData.Find(ActiveItemIndex);
-
-	return Item->GrantedAbility;
 }
 
-UPPItemData* UPPInventoryComponent::GetItemByIndex(int32 ItemIndex)
+void UPPInventoryComponent::BeginPlay()
 {
-	if (ItemIndex == INDEX_NONE)
+	Super::BeginPlay();
+
+	InitSlottedItems();
+}
+
+void UPPInventoryComponent::InitSlottedItems()
+{
+	for (TPair<EItemType, int32> Elem : ItemSlotsPerType)
 	{
-		return nullptr;
+		for (int32 SlotNumber = 0; SlotNumber < Elem.Value; ++SlotNumber)
+		{
+			SlottedItems.Add(FPPItemSlot(Elem.Key, SlotNumber), nullptr);
+		}
 	}
-
-	UPPItemData* Item = *InventoryData.Find(ItemIndex);
-
-	return Item;
-}
-
-int32 UPPInventoryComponent::AddItem(UPPItemData* Item)
-{
-	if (Item)
-	{
-		int32 Num = InventoryData.Num();
-	
-		InventoryData.Add(Num, Item);
-
-		return Num;
-	}
-
-	return INDEX_NONE;
-}
-
-void UPPInventoryComponent::RemoveItem(UPPItemData* Item)
-{
-	int32 Index = 0;
-
-	for (const auto& Elem : InventoryData)
-	{
-		++Index;
-		if (Elem.Value == Item)
-			break;
-	}
-
-	InventoryData.Remove(Index);
-}
-
-UPPItemData* UPPInventoryComponent::GetActiveItem() const
-{
-	return *InventoryData.Find(ActiveItemIndex);
 }
