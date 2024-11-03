@@ -6,7 +6,7 @@
 #include "Abilities/GameplayAbility.h"
 #include "PPWeaponFireAbility.generated.h"
 
-class UPPItemData;
+class UPPItem;
 
 UCLASS()
 class PETPROJECT_API UPPWeaponFireAbility : public UGameplayAbility
@@ -27,7 +27,7 @@ protected:
 
 	void TraceBulletsInCartridge(FVector& StartTrace, FVector& EndAim, TArray<FHitResult>& OutHits);
 
-	UPPItemData* GetWeaponData() const;
+	UPPItem* GetWeaponData() const;
 
 	void TraceBulletsSpread(FVector& StartTrace, FVector& EndAim, int32 Bullets, TArray<FHitResult>& OutHits);
 

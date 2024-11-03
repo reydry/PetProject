@@ -75,7 +75,7 @@ void UPPWeaponFireAbility::PerformLocalTargeting(TArray<FHitResult>& OutHits)
 
 void UPPWeaponFireAbility::TraceBulletsInCartridge(FVector& StartTrace, FVector& EndAim, TArray<FHitResult>& OutHits)
 {
-	UPPItemData* ItemData = GetWeaponData();
+	UPPItem* ItemData = GetWeaponData();
 
 	if (!IsValid(ItemData))
 	{
@@ -96,7 +96,7 @@ void UPPWeaponFireAbility::TraceBulletsInCartridge(FVector& StartTrace, FVector&
 	}
 }
 
-UPPItemData* UPPWeaponFireAbility::GetWeaponData() const
+UPPItem* UPPWeaponFireAbility::GetWeaponData() const
 {
 	APawn* Pawn = Cast<APawn>(GetAvatarActorFromActorInfo());
 
@@ -109,7 +109,7 @@ UPPItemData* UPPWeaponFireAbility::GetWeaponData() const
 
 	if (IsValid(PlayerInventory))
 	{
-		return PlayerInventory->GetActiveItem();
+		//return PlayerInventory->GetActiveItem();
 	}
 
 	return nullptr;

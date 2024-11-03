@@ -4,35 +4,25 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "PPInventoryComponent.h"
 #include "PPItemData.generated.h"
 
 class UGameplayAbility;
 class APPBaseWeapon;
 
-UENUM()
-enum class EItemType
-{
-	None = 0,
-	Weapon = 1,
-};
-
 UCLASS(Abstract, BlueprintType)
-class PETPROJECT_API UPPItemData : public UPrimaryDataAsset
+class PETPROJECT_API UPPItem : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 	
 public:
-	UPPItemData() {};
-	
-	virtual FPrimaryAssetId GetPrimaryAssetId() const override;
-	
-	FString GetIdentifierString() const;
+	UPPItem() {};
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-	FPrimaryAssetType ItemType;
+	EItemType ItemType;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-	TSubclassOf<APPBaseWeapon> ItemActor;
+	TSubclassOf<AActor> ItemActor;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	TSubclassOf<UGameplayAbility> GrantedAbility;
@@ -45,4 +35,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	int32 Count = 1;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	UTexture2D* Icon = nullptr;
 };

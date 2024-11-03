@@ -7,6 +7,7 @@
 UPPInventoryComponent::UPPInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bStartWithTickEnabled = false;
 }
 
 UPPInventoryComponent* UPPInventoryComponent::GetInventoryComponentFromActor(const AActor* InActor)
@@ -19,101 +20,131 @@ UPPInventoryComponent* UPPInventoryComponent::GetInventoryComponentFromActor(con
 	return nullptr;
 }
 
-void UPPInventoryComponent::SetItem(int32 Index)
+void UPPInventoryComponent::AddItem(UPPItem* Item, FPPItemData ItemData, bool bAutoSlot)
 {
-	int32 PrevIndex = ActiveItemIndex;
-	ActiveItemIndex = Index;
-	ActiveChangedDelegateHandle.Broadcast(PrevIndex, ActiveItemIndex);
-}
+	Inventory.Add(Item, ItemData);
 
-UPPItemData* UPPInventoryComponent::GetNextWeapon()
-{
-	return *InventoryData.Find(GetNextWeaponIndex());
-}
-
-int32 UPPInventoryComponent::GetNextWeaponIndex()
-{
-	//TODO: rewrite using Iterator
-	int32 Index = ActiveItemIndex + 1; 
-
-	if (Index > InventoryData.Num() - 1)
+	if (bAutoSlot)
 	{
-		return 0;
+		FillEmptySlotWithItem(Item);
+	}
+}
+
+void UPPInventoryComponent::SetSlottedItem(UPPItem* Item, FPPItemSlot ItemSlot)
+{
+	for (TPair<FPPItemSlot, UPPItem*>& Elem : SlottedItems)
+	{
+		if (Elem.Key == ItemSlot)
+		{
+			Elem.Value = Item;
+		}
+		//else if (IsValid(Item) && Elem.Value == Item)
+		//{
+		//	Elem.Value = nullptr;
+		//}
 	}
 
-	return Index;
+	OnSlottedItemChangedDelegateHandle.Broadcast(Item, ItemSlot);
 }
 
-int32 UPPInventoryComponent::GetItemCount(UPPItemData* ItemData)
+void UPPInventoryComponent::FillEmptySlotWithItem(UPPItem* Item)
 {
-	return 0;
-}
+	FPPItemSlot ItemSlot;
 
-TSubclassOf<APPBaseWeapon> UPPInventoryComponent::GetWeaponActor() const
-{
-	if (ActiveItemIndex == INDEX_NONE)
+	for (TPair<FPPItemSlot, UPPItem*>& Elem : SlottedItems)
 	{
-		return TSubclassOf<APPBaseWeapon>();
+		if (Elem.Key.ItemType == Item->ItemType)
+		{
+			if (Elem.Value == Item)
+			{
+				return;
+			}
+			else if (Elem.Value == nullptr && (!ItemSlot.IsValid() || ItemSlot.SlotNumber > Elem.Key.SlotNumber))
+			{
+				ItemSlot = Elem.Key;
+				break;
+			}
+		}
 	}
-
-	auto Item = *InventoryData.Find(ActiveItemIndex);
 	
-	return Item->ItemActor;
-}
-
-TSubclassOf<UGameplayAbility> UPPInventoryComponent::GetGrantedAbility() const
-{
-	if (ActiveItemIndex == INDEX_NONE)
+	if (ItemSlot.IsValid())
 	{
-		return TSubclassOf<UGameplayAbility>();
+		SlottedItems[ItemSlot] = Item;
 	}
-
-	auto Item = *InventoryData.Find(ActiveItemIndex);
-
-	return Item->GrantedAbility;
-}
-
-UPPItemData* UPPInventoryComponent::GetItemByIndex(int32 ItemIndex)
-{
-	if (ItemIndex == INDEX_NONE)
-	{
-		return nullptr;
-	}
-
-	UPPItemData* Item = *InventoryData.Find(ItemIndex);
-
-	return Item;
-}
-
-int32 UPPInventoryComponent::AddItem(UPPItemData* Item)
-{
-	if (Item)
-	{
-		int32 Num = InventoryData.Num();
 	
-		InventoryData.Add(Num, Item);
-
-		return Num;
-	}
-
-	return INDEX_NONE;
+	OnSlottedItemChangedDelegateHandle.Broadcast(Item, ItemSlot);
 }
 
-void UPPInventoryComponent::RemoveItem(UPPItemData* Item)
+void UPPInventoryComponent::GetSlottedItemsByType(TArray<UPPItem*>& Items, EItemType ItemType)
 {
-	int32 Index = 0;
-
-	for (const auto& Elem : InventoryData)
+	for (TPair<FPPItemSlot, UPPItem*>& Elem : SlottedItems)
 	{
-		++Index;
-		if (Elem.Value == Item)
-			break;
+		if (Elem.Key.ItemType == ItemType)
+		{
+			Items.Add(Elem.Value);
+		}
 	}
-
-	InventoryData.Remove(Index);
 }
 
-UPPItemData* UPPInventoryComponent::GetActiveItem() const
+void UPPInventoryComponent::GetAllSlottedItems(TArray<UPPItem*>& Items)
 {
-	return *InventoryData.Find(ActiveItemIndex);
+	for (TPair<FPPItemSlot, UPPItem*>& Elem : SlottedItems)
+	{
+		if (IsValid(Elem.Value))
+		{
+			Items.Add(Elem.Value);
+		}
+	}
+}
+
+FPPItemData UPPInventoryComponent::GetItemData(UPPItem* Item)
+{
+	return *Inventory.Find(Item);
+}
+
+void UPPInventoryComponent::ConsumeItem(UPPItem* InItem, int32 Count, bool bShouldRemove)
+{
+	FPPItemData ItemData = *Inventory.Find(InItem);
+	
+	ItemData.ItemCount = FMath::Clamp(ItemData.ItemCount, 0, ItemData.ItemCount - Count);
+
+	if (bShouldRemove && ItemData.ItemCount <= 0)
+	{
+		RemoveItem(InItem);
+		return;
+	}
+	
+	Inventory.Add(InItem, ItemData);
+}
+
+void UPPInventoryComponent::RemoveItem(UPPItem* InItem)
+{
+	Inventory.Remove(InItem);
+	
+	for (auto& Elem : SlottedItems)
+	{
+		if (Elem.Value == InItem)
+		{
+			Elem.Value = nullptr;
+			OnSlottedItemChangedDelegateHandle.Broadcast(nullptr, Elem.Key);
+		}
+	}
+}
+
+void UPPInventoryComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	InitSlottedItems();
+}
+
+void UPPInventoryComponent::InitSlottedItems()
+{
+	for (TPair<EItemType, int32> Elem : ItemSlotsPerType)
+	{
+		for (int32 SlotNumber = 0; SlotNumber < Elem.Value; ++SlotNumber)
+		{
+			SlottedItems.Add(FPPItemSlot(Elem.Key, SlotNumber), nullptr);
+		}
+	}
 }
