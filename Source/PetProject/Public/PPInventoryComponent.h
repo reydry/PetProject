@@ -7,8 +7,6 @@
 #include "Weapons/PPBaseWeapon.h"
 #include "PPInventoryComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSlottedItemChangedDelegate, UPPItem*, Item, int32, SlotNumber);
-
 UENUM(BlueprintType)
 enum class EItemType : uint8
 {
@@ -66,6 +64,8 @@ struct FPPItemSlot
 	}
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSlottedItemChangedDelegate, UPPItem*, Item, FPPItemSlot, Slot);
+
 UCLASS(BlueprintType, Blueprintable)
 class PETPROJECT_API UPPInventoryComponent : public UActorComponent
 {
@@ -85,10 +85,21 @@ public:
 	void FillEmptySlotWithItem(UPPItem* Item);
 
 	UFUNCTION(BlueprintPure)
-	void GetSlottedItems(TArray<UPPItem*>& Items, EItemType ItemType);
+	void GetSlottedItemsByType(TArray<UPPItem*>& Items, EItemType ItemType);
 
 	UPROPERTY(BlueprintAssignable)
 	FOnSlottedItemChangedDelegate OnSlottedItemChangedDelegateHandle;
+
+	UFUNCTION(BlueprintPure)
+	void GetAllSlottedItems(TArray<UPPItem*>& Items);
+
+	UFUNCTION(BlueprintPure)
+	FPPItemData GetItemData(UPPItem* Item);
+
+	UFUNCTION(BlueprintCallable)
+	void ConsumeItem(UPPItem* InItem, int32 Count, bool bShouldRemove);
+
+	void RemoveItem(UPPItem* InItem);
 
 protected:
 	virtual void BeginPlay() override;
@@ -98,7 +109,7 @@ protected:
 private:
 	//non-equipped items
 	TMap<UPPItem*, FPPItemData> Inventory;
-	
+
 	//equipped items
 	TMap<FPPItemSlot, UPPItem*> SlottedItems;
 

@@ -35,4 +35,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	int32 Count = 1;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	UTexture2D* Icon = nullptr;
 };
