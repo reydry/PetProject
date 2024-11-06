@@ -38,4 +38,13 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	UTexture2D* Icon = nullptr;
+
+	UFUNCTION(BlueprintPure)
+	bool IsConsumable() const;
+
+	UFUNCTION(BlueprintPure)
+	bool IsWeapon() const;
+
+	UFUNCTION(BlueprintPure)
+	bool IsSpell() const;
 };
