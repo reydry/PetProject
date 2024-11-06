@@ -65,6 +65,7 @@ struct FPPItemSlot
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSlottedItemChangedDelegate, UPPItem*, Item, FPPItemSlot, Slot);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInventoryItemChangedDelegate, UPPItem*, Item, FPPItemData, ItemData);
 
 UCLASS(BlueprintType, Blueprintable)
 class PETPROJECT_API UPPInventoryComponent : public UActorComponent
@@ -87,9 +88,6 @@ public:
 	UFUNCTION(BlueprintPure)
 	void GetSlottedItemsByType(TArray<UPPItem*>& Items, EItemType ItemType);
 
-	UPROPERTY(BlueprintAssignable)
-	FOnSlottedItemChangedDelegate OnSlottedItemChangedDelegateHandle;
-
 	UFUNCTION(BlueprintPure)
 	void GetAllSlottedItems(TArray<UPPItem*>& Items);
 
@@ -100,6 +98,15 @@ public:
 	void ConsumeItem(UPPItem* InItem, int32 Count, bool bShouldRemove);
 
 	void RemoveItem(UPPItem* InItem);
+
+	UFUNCTION(BlueprintPure)
+	int32 GetItemCount(UPPItem* InItem);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnSlottedItemChangedDelegate OnSlottedItemChangedDelegateHandle;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnInventoryItemChangedDelegate OnInventoryItemChangedDelegateHandle;
 
 protected:
 	virtual void BeginPlay() override;

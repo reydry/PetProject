@@ -104,17 +104,23 @@ FPPItemData UPPInventoryComponent::GetItemData(UPPItem* Item)
 
 void UPPInventoryComponent::ConsumeItem(UPPItem* InItem, int32 Count, bool bShouldRemove)
 {
-	FPPItemData ItemData = *Inventory.Find(InItem);
+	FPPItemData* ItemData = Inventory.Find(InItem);
 	
-	ItemData.ItemCount = FMath::Clamp(ItemData.ItemCount, 0, ItemData.ItemCount - Count);
+	if (!ItemData)
+	{
+		return;
+	}
 
-	if (bShouldRemove && ItemData.ItemCount <= 0)
+	ItemData->ItemCount = FMath::Clamp(ItemData->ItemCount, 0, ItemData->ItemCount - Count);
+
+	if (bShouldRemove && ItemData->ItemCount <= 0)
 	{
 		RemoveItem(InItem);
 		return;
 	}
 	
-	Inventory.Add(InItem, ItemData);
+	Inventory.Add(InItem, *ItemData);
+	OnInventoryItemChangedDelegateHandle.Broadcast(InItem, *ItemData);
 }
 
 void UPPInventoryComponent::RemoveItem(UPPItem* InItem)
@@ -147,4 +153,16 @@ void UPPInventoryComponent::InitSlottedItems()
 			SlottedItems.Add(FPPItemSlot(Elem.Key, SlotNumber), nullptr);
 		}
 	}
+}
+
+int32 UPPInventoryComponent::GetItemCount(UPPItem* InItem)
+{
+	FPPItemData* ItemData = Inventory.Find(InItem);
+	
+	if (ItemData)
+	{
+		return ItemData->ItemCount;
+	}
+
+	return 0;
 }

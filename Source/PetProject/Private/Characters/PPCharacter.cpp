@@ -124,11 +124,11 @@ void APPCharacter::ActivateAbility(TSubclassOf<UGameplayAbility> InAbility)
 		return;
 	}
 
-	FGameplayAbilitySpecHandle Ability = *GivenAbilities.Find(InAbility);
+	FGameplayAbilitySpecHandle* Ability = GivenAbilities.Find(InAbility);
 
-	if (IsValid(AbilitySystemComponent))
+	if (Ability)
 	{
-		AbilitySystemComponent->TryActivateAbility(Ability);
+		AbilitySystemComponent->TryActivateAbility(*Ability);
 	}
 }
 
@@ -139,11 +139,11 @@ void APPCharacter::CancelAbility(TSubclassOf<UGameplayAbility> InAbility)
 		return;
 	}
 
-	FGameplayAbilitySpecHandle Ability = *GivenAbilities.Find(InAbility);
+	FGameplayAbilitySpecHandle *Ability = GivenAbilities.Find(InAbility);
 
-	if (IsValid(AbilitySystemComponent))
+	if (Ability)
 	{
-		AbilitySystemComponent->CancelAbilityHandle(Ability);
+		AbilitySystemComponent->CancelAbilityHandle(*Ability);
 	}
 }
 
