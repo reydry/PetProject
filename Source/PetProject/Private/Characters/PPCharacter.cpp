@@ -54,12 +54,22 @@ void APPCharacter::InitAbilitySystem(AController* InController)
 	}
 }
 
+void APPCharacter::GivePassiveAbility(TSubclassOf<UGameplayAbility> InAbility)
+{
+	if (IsValid(AbilitySystemComponent) && IsValid(InAbility))
+	{
+		FGameplayAbilitySpec AbilitySpec(InAbility);
+		FGameplayAbilitySpecHandle AbilitySpecHandle = AbilitySystemComponent->GiveAbilityAndActivateOnce(AbilitySpec);
+		GivenAbilities.Add(InAbility, AbilitySpecHandle);
+	}
+}
+
 void APPCharacter::GiveAbility(TSubclassOf<UGameplayAbility> InAbility)
 {
 	if (IsValid(AbilitySystemComponent) && IsValid(InAbility))
 	{
-		FGameplayAbilitySpecHandle AbilitySpecHandle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(InAbility));
-
+		FGameplayAbilitySpec AbilitySpec(InAbility);
+		FGameplayAbilitySpecHandle AbilitySpecHandle = AbilitySystemComponent->GiveAbility(AbilitySpec);
 		GivenAbilities.Add(InAbility, AbilitySpecHandle);
 	}
 }
@@ -121,12 +131,26 @@ void APPCharacter::CancelAbility(TSubclassOf<UGameplayAbility> InAbility)
 	}
 }
 
+void APPCharacter::RemoveAbilities()
+{
+	for (TTuple<TSubclassOf<UGameplayAbility>, FGameplayAbilitySpecHandle>& Ability : GivenAbilities)
+	{
+		AbilitySystemComponent->ClearAbility(Ability.Value);
+	}
+}
+
 void APPCharacter::SetupAbilities()
 {
 	for (TSubclassOf<UGameplayAbility>& Ability : Abilities)
 	{
 		GiveAbility(Ability);
 	}
+
+	for (TSubclassOf<UGameplayAbility>& PassiveAbility : PassiveAbilities)
+	{
+		GivePassiveAbility(PassiveAbility);
+	}
+
 }
 
 void APPCharacter::SetupHealthComponent()

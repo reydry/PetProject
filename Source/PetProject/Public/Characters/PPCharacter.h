@@ -42,6 +42,9 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void CancelAbility(TSubclassOf<UGameplayAbility> InAbility);
 
+	UFUNCTION(BlueprintCallable)
+	void RemoveAbilities();
+
 	UPROPERTY(EditDefaultsOnly)
 	bool bIsDummy = false;
 
@@ -49,6 +52,8 @@ protected:
 	void SetupHealthComponent();
 
 	void InitAbilitySystem(AController* InController);
+
+	void GivePassiveAbility(TSubclassOf<UGameplayAbility> InAbility);
 
 private:
 	UPROPERTY()
@@ -59,6 +64,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<UGameplayAbility>> Abilities;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
+	TArray<TSubclassOf<UGameplayAbility>> PassiveAbilities;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGameplayEffect> DefaultAttributes;

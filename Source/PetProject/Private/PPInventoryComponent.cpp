@@ -70,6 +70,7 @@ void UPPInventoryComponent::FillEmptySlotWithItem(UPPItem* Item)
 	if (ItemSlot.IsValid())
 	{
 		SlottedItems[ItemSlot] = Item;
+		SetActiveItem(ItemSlot);
 	}
 	
 	OnSlottedItemChangedDelegateHandle.Broadcast(Item, ItemSlot);
@@ -99,7 +100,14 @@ void UPPInventoryComponent::GetAllSlottedItems(TArray<UPPItem*>& Items)
 
 FPPItemData UPPInventoryComponent::GetItemData(UPPItem* Item)
 {
-	return *Inventory.Find(Item);
+	FPPItemData* Data = Inventory.Find(Item);
+	
+	if (Data)
+	{
+		return *Data;
+	}
+
+	return FPPItemData();
 }
 
 void UPPInventoryComponent::ConsumeItem(UPPItem* InItem, int32 Count, bool bShouldRemove)
@@ -131,8 +139,8 @@ void UPPInventoryComponent::RemoveItem(UPPItem* InItem)
 	{
 		if (Elem.Value == InItem)
 		{
+			OnSlottedItemChangedDelegateHandle.Broadcast(Elem.Value, Elem.Key);
 			Elem.Value = nullptr;
-			OnSlottedItemChangedDelegateHandle.Broadcast(nullptr, Elem.Key);
 		}
 	}
 }
@@ -142,6 +150,40 @@ void UPPInventoryComponent::BeginPlay()
 	Super::BeginPlay();
 
 	InitSlottedItems();
+}
+
+void UPPInventoryComponent::SetActiveItem(FPPItemSlot Slot)
+{
+	ActiveItems.Add(Slot.ItemType, Slot.SlotNumber);
+
+	UPPItem** Item = SlottedItems.Find(Slot);
+
+	OnActiveItemChangedDelegateHandle.Broadcast(*Item);
+}
+
+int32 UPPInventoryComponent::GetActiveItemIndexByType(EItemType Type)
+{
+	int32* Index = ActiveItems.Find(Type);
+
+	return Index ? *Index : 0;
+}
+
+UPPItem* UPPInventoryComponent::GetActiveItemByType(EItemType Type)
+{
+	int32* Index = ActiveItems.Find(Type);
+
+	if (Index)
+	{
+		FPPItemSlot Slot(Type, *Index);
+		UPPItem** Item = SlottedItems.Find(Slot);
+
+		if (Item)
+		{
+			return *Item;
+		}
+	}
+
+	return nullptr;
 }
 
 void UPPInventoryComponent::InitSlottedItems()

@@ -66,6 +66,7 @@ struct FPPItemSlot
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSlottedItemChangedDelegate, UPPItem*, Item, FPPItemSlot, Slot);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInventoryItemChangedDelegate, UPPItem*, Item, FPPItemData, ItemData);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActiveItemChangedDelegate, UPPItem*, Item);
 
 UCLASS(BlueprintType, Blueprintable)
 class PETPROJECT_API UPPInventoryComponent : public UActorComponent
@@ -108,6 +109,18 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnInventoryItemChangedDelegate OnInventoryItemChangedDelegateHandle;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnActiveItemChangedDelegate OnActiveItemChangedDelegateHandle;
+
+	UFUNCTION(BlueprintCallable)
+	void SetActiveItem(FPPItemSlot Slot);
+
+	UFUNCTION(BlueprintPure)
+	int32 GetActiveItemIndexByType(EItemType Type);
+
+	UFUNCTION(BlueprintPure)
+	UPPItem* GetActiveItemByType(EItemType Type);
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -122,4 +135,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TMap<EItemType, int32> ItemSlotsPerType;
+
+	TMap<EItemType, int32> ActiveItems;
 };
