@@ -32,29 +32,14 @@ void APPCharacter::PossessedBy(AController* InController)
 {
 	Super::PossessedBy(InController);
 
-	SetupAbilitySystem();
+	InitAbilitySystem(InController);
+	SetupHealthComponent();
+	SetupAbilities();
 }
 
-void APPCharacter::SetupAbilitySystem()
+void APPCharacter::InitAbilitySystem(AController* InController)
 {
-	InitAbilitySystem();
-
-	for (TSubclassOf<UGameplayAbility>& Ability : Abilities)
-	{
-		GiveAbility(Ability);
-	}
-
-	ApplyPassiveEffects();
-
-	if (IsValid(HealthComponent))
-	{
-		HealthComponent->InitializeComponentData(AbilitySystemComponent);
-	}
-}
-
-void APPCharacter::InitAbilitySystem()
-{
-	APPPlayerState* State = GetPlayerState<APPPlayerState>();
+	APPPlayerState* State = InController->GetPlayerState<APPPlayerState>();
 
 	if (!IsValid(State))
 	{
@@ -76,17 +61,6 @@ void APPCharacter::GiveAbility(TSubclassOf<UGameplayAbility> InAbility)
 		FGameplayAbilitySpecHandle AbilitySpecHandle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(InAbility));
 
 		GivenAbilities.Add(InAbility, AbilitySpecHandle);
-	}
-}
-
-void APPCharacter::ApplyPassiveEffects()
-{
-	if (IsValid(AbilitySystemComponent) && IsValid(DefaultAttributes))
-	{
-		for (TSubclassOf<UGameplayEffect> Effect : PermanentEffects)
-		{
-			AbilitySystemComponent->ApplyGameplayEffectToSelf(DefaultAttributes.GetDefaultObject(), 1, FGameplayEffectContextHandle());
-		}
 	}
 }
 
@@ -144,6 +118,22 @@ void APPCharacter::CancelAbility(TSubclassOf<UGameplayAbility> InAbility)
 	if (Ability)
 	{
 		AbilitySystemComponent->CancelAbilityHandle(*Ability);
+	}
+}
+
+void APPCharacter::SetupAbilities()
+{
+	for (TSubclassOf<UGameplayAbility>& Ability : Abilities)
+	{
+		GiveAbility(Ability);
+	}
+}
+
+void APPCharacter::SetupHealthComponent()
+{
+	if (IsValid(HealthComponent))
+	{
+		HealthComponent->InitializeComponentData(AbilitySystemComponent);
 	}
 }
 
