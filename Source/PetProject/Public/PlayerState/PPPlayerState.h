@@ -11,6 +11,14 @@
 class UPPCharacterSet;
 class UPPSoulsSet;
 
+UENUM(BlueprintType)
+enum class EPPTeam : uint8
+{
+	None,
+	Player,
+	Bot
+};
+
 UCLASS()
 class PETPROJECT_API APPPlayerState : public APlayerState, public IAbilitySystemInterface
 {
@@ -20,6 +28,14 @@ public:
 	APPPlayerState(const FObjectInitializer& ObjectInitializer);
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+protected:
+	virtual void BeginPlay() override;
+
+	void SetupTeam();
+
+	UPROPERTY(BlueprintReadOnly)
+	EPPTeam Team = EPPTeam::None;
 
 private:
 	UPROPERTY(VisibleAnywhere)

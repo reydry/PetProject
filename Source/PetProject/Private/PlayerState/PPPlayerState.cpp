@@ -18,3 +18,21 @@ UAbilitySystemComponent* APPPlayerState::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
+void APPPlayerState::BeginPlay()
+{
+	Super::BeginPlay();
+
+	SetupTeam();
+}
+
+void APPPlayerState::SetupTeam()
+{
+	if (IsABot())
+	{
+		Team = EPPTeam::Bot;
+		return;
+	}
+
+	Team = EPPTeam::Player;
+}
+

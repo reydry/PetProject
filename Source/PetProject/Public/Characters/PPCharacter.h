@@ -27,16 +27,11 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 protected:
-	void InitAbilitySystem();
-	void ApplyPassiveEffects();
-
 	UFUNCTION(BlueprintCallable)
 	void GiveAbility(TSubclassOf<UGameplayAbility> InAbility);
 
 	UFUNCTION(BlueprintCallable)
 	void RemoveAbility(TSubclassOf<UGameplayAbility> InAbility);
-
-	void SetupAbilitySystem();
 
 	UFUNCTION(BlueprintCallable)
 	bool IsAbilityActive(TSubclassOf<UGameplayAbility> InAbilityClass);
@@ -47,8 +42,18 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void CancelAbility(TSubclassOf<UGameplayAbility> InAbility);
 
+	UFUNCTION(BlueprintCallable)
+	void RemoveAbilities();
+
 	UPROPERTY(EditDefaultsOnly)
 	bool bIsDummy = false;
+
+	void SetupAbilities();
+	void SetupHealthComponent();
+
+	void InitAbilitySystem(AController* InController);
+
+	void GivePassiveAbility(TSubclassOf<UGameplayAbility> InAbility);
 
 private:
 	UPROPERTY()
@@ -60,6 +65,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<UGameplayAbility>> Abilities;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
+	TArray<TSubclassOf<UGameplayAbility>> PassiveAbilities;
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGameplayEffect> DefaultAttributes;
 
@@ -67,7 +75,7 @@ private:
 	TMap<TSubclassOf<UGameplayAbility>, FGameplayAbilitySpecHandle> GivenAbilities;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
-	TArray<TSubclassOf<UGameplayEffect>> PermanentEffects;
+	TArray<TSubclassOf<UGameplayEffect>> Effects;
 
 	UPROPERTY()
 	UPPCameraLockComponent* CameraLockComponent = nullptr;
