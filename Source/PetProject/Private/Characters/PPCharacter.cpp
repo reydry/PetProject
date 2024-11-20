@@ -64,6 +64,28 @@ void APPCharacter::GivePassiveAbility(TSubclassOf<UGameplayAbility> InAbility)
 	}
 }
 
+void APPCharacter::GetActiveAbilitiesWithTags(FGameplayTagContainer AbilityTagContainer, TArray<UGameplayAbility*>& ActiveAbilities)
+{
+	if (!IsValid(AbilitySystemComponent))
+	{
+		return;
+	}
+
+	TArray<FGameplayAbilitySpec*> AbilitiesToActivate;
+	AbilitySystemComponent->GetActivatableGameplayAbilitySpecsByAllMatchingTags(AbilityTagContainer, AbilitiesToActivate, false);
+
+	for (FGameplayAbilitySpec* Spec : AbilitiesToActivate)
+	{
+		TArray<UGameplayAbility*> AbilityInstances = Spec->GetAbilityInstances();
+
+		for (UGameplayAbility* Ability : AbilityInstances)
+		{
+			ActiveAbilities.Add(Ability);
+		}
+	}
+	
+}
+
 void APPCharacter::GiveAbility(TSubclassOf<UGameplayAbility> InAbility)
 {
 	if (IsValid(AbilitySystemComponent) && IsValid(InAbility))
@@ -113,6 +135,14 @@ void APPCharacter::ActivateAbility(TSubclassOf<UGameplayAbility> InAbility)
 	if (Ability)
 	{
 		AbilitySystemComponent->TryActivateAbility(*Ability);
+	}
+}
+
+void APPCharacter::ActivateAbilityWithTag(FGameplayTagContainer AbilityTagContainer)
+{
+	if (IsValid(AbilitySystemComponent))
+	{
+		AbilitySystemComponent->TryActivateAbilitiesByTag(AbilityTagContainer);
 	}
 }
 
