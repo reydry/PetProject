@@ -40,6 +40,9 @@ protected:
 	void ActivateAbility(TSubclassOf<UGameplayAbility> InAbility);
 
 	UFUNCTION(BlueprintCallable)
+	void ActivateAbilityWithTag(FGameplayTagContainer AbilityTagContainer);
+
+	UFUNCTION(BlueprintCallable)
 	void CancelAbility(TSubclassOf<UGameplayAbility> InAbility);
 
 	UFUNCTION(BlueprintCallable)
@@ -54,6 +57,9 @@ protected:
 	void InitAbilitySystem(AController* InController);
 
 	void GivePassiveAbility(TSubclassOf<UGameplayAbility> InAbility);
+
+	UFUNCTION(BlueprintCallable)
+	void GetActiveAbilitiesWithTags(FGameplayTagContainer AbilityTagContainer, TArray<UGameplayAbility*>& ActiveAbilities);
 
 private:
 	UPROPERTY()
