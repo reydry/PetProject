@@ -145,6 +145,18 @@ void UPPInventoryComponent::RemoveItem(UPPItem* InItem)
 	}
 }
 
+TSubclassOf<UGameplayAbility> UPPInventoryComponent::GetItemAbility(EItemType ItemType)
+{
+	UPPItem* Item = GetActiveItemByType(ItemType);
+
+	if (IsValid(Item))
+	{
+		return Item->GrantedAbility;
+	}
+
+	return TSubclassOf<UGameplayAbility>();
+}
+
 void UPPInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();

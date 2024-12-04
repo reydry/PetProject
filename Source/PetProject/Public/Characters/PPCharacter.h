@@ -63,7 +63,7 @@ protected:
 	void GetActiveAbilitiesWithTags(FGameplayTagContainer AbilityTagContainer, TArray<UGameplayAbility*>& ActiveAbilities);
 
 	UFUNCTION(BlueprintPure)
-	TSubclassOf<UGameplayAbility> GetAbiity(EItemType ItemType);
+	TSubclassOf<UGameplayAbility> GetAbility(EItemType ItemType);
 
 private:
 	UPROPERTY()

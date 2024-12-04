@@ -86,18 +86,13 @@ void APPCharacter::GetActiveAbilitiesWithTags(FGameplayTagContainer AbilityTagCo
 	}
 }
 
-TSubclassOf<UGameplayAbility> APPCharacter::GetAbiity(EItemType ItemType)
+TSubclassOf<UGameplayAbility> APPCharacter::GetAbility(EItemType ItemType)
 {
 	UPPInventoryComponent* InventoryComponent = UPPInventoryComponent::GetInventoryComponentFromActor(GetController());
 
 	if (IsValid(InventoryComponent))
 	{
-		UPPItem* Item = InventoryComponent->GetActiveItemByType(ItemType);
-
-		if (IsValid(Item))
-		{
-			return Item->GrantedAbility;
-		}
+		return InventoryComponent->GetItemAbility(ItemType);
 	}
 
 	return TSubclassOf<UGameplayAbility>();

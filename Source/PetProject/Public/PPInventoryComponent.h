@@ -68,6 +68,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSlottedItemChangedDelegate, UPPI
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInventoryItemChangedDelegate, UPPItem*, Item, FPPItemData, ItemData);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActiveItemChangedDelegate, UPPItem*, Item);
 
+class UGameplayAbility;
+
 UCLASS(BlueprintType, Blueprintable)
 class PETPROJECT_API UPPInventoryComponent : public UActorComponent
 {
@@ -99,6 +101,8 @@ public:
 	void ConsumeItem(UPPItem* InItem, int32 Count, bool bShouldRemove);
 
 	void RemoveItem(UPPItem* InItem);
+
+	TSubclassOf<UGameplayAbility> GetItemAbility(EItemType ItemType);
 
 	UFUNCTION(BlueprintPure)
 	int32 GetItemCount(UPPItem* InItem);
