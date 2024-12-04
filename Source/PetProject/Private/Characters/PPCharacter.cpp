@@ -6,6 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/PPHealthComponent.h"
+#include "ItemData/PPItemData.h"
 #include "Components/PPCameraLockComponent.h"
 
 APPCharacter::APPCharacter()
@@ -83,7 +84,23 @@ void APPCharacter::GetActiveAbilitiesWithTags(FGameplayTagContainer AbilityTagCo
 			ActiveAbilities.Add(Ability);
 		}
 	}
-	
+}
+
+TSubclassOf<UGameplayAbility> APPCharacter::GetAbiity(EItemType ItemType)
+{
+	UPPInventoryComponent* InventoryComponent = UPPInventoryComponent::GetInventoryComponentFromActor(GetController());
+
+	if (IsValid(InventoryComponent))
+	{
+		UPPItem* Item = InventoryComponent->GetActiveItemByType(ItemType);
+
+		if (IsValid(Item))
+		{
+			return Item->GrantedAbility;
+		}
+	}
+
+	return TSubclassOf<UGameplayAbility>();
 }
 
 void APPCharacter::GiveAbility(TSubclassOf<UGameplayAbility> InAbility)

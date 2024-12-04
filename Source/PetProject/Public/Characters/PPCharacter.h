@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
 #include "GameplayAbilitySpec.h"
+#include "PPinventoryComponent.h"
 #include "PPCharacter.generated.h"
 
 class UAbilitySystemComponent;
@@ -60,6 +61,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void GetActiveAbilitiesWithTags(FGameplayTagContainer AbilityTagContainer, TArray<UGameplayAbility*>& ActiveAbilities);
+
+	UFUNCTION(BlueprintPure)
+	TSubclassOf<UGameplayAbility> GetAbiity(EItemType ItemType);
 
 private:
 	UPROPERTY()

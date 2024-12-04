@@ -22,10 +22,10 @@ struct FPPItemData
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EItemType ItemType;
+	EItemType ItemType = EItemType::None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 ItemCount;
+	int32 ItemCount = 0;
 };
 
 USTRUCT(BlueprintType)
@@ -131,6 +131,7 @@ private:
 	TMap<UPPItem*, FPPItemData> Inventory;
 
 	//equipped items
+	UPROPERTY()
 	TMap<FPPItemSlot, UPPItem*> SlottedItems;
 
 	UPROPERTY(EditDefaultsOnly)
