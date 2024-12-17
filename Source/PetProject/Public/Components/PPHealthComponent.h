@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "GameplayEffectTypes.h"
 #include "PPHealthComponent.generated.h"
 
 class UPPCharacterSet;
@@ -24,9 +25,9 @@ public:
 
 	void InitializeComponentData(UAbilitySystemComponent* InAbilitySystem);
 
-	void OnHealthChanged(const FOnAttributeChangeData& Data);
-	void OnManaChanged(const FOnAttributeChangeData& Data);
-	void OnStaminaChanged(const FOnAttributeChangeData& Data);
+	virtual void OnHealthChanged(const FOnAttributeChangeData& Data);
+	virtual void OnManaChanged(const FOnAttributeChangeData& Data);
+	virtual void OnStaminaChanged(const FOnAttributeChangeData& Data);
 
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedDelegate OnAttributeChangedDelegateHandle;

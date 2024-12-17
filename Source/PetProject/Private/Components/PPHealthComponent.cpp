@@ -2,6 +2,7 @@
 
 #include "Components/PPHealthComponent.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Attributes/PPCharacterSet.h"
 
 UPPHealthComponent::UPPHealthComponent()
@@ -42,6 +43,11 @@ void UPPHealthComponent::InitializeComponentData(UAbilitySystemComponent* InAbil
 void UPPHealthComponent::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
 	OnAttributeChangedDelegateHandle.Broadcast(Data.NewValue, CharacterSet->GetMaxHealth(), Data.Attribute.AttributeName);
+	
+	if (FMath::IsNearlyZero(Data.NewValue))
+	{
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(), FGameplayTag::RequestGameplayTag("Ability.Death"), FGameplayEventData());
+	}
 	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("health = %f"), Data.NewValue));
 }
 

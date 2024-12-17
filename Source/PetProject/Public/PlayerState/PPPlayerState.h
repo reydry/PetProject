@@ -29,6 +29,9 @@ public:
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
+	UFUNCTION(BlueprintPure)
+	UPPCharacterSet* GetCharacterSet();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -43,7 +46,4 @@ private:
 
 	UPROPERTY()
 	UPPCharacterSet* CharacterSet;
-	
-	UPROPERTY()
-	UPPSoulsSet* SoulsSet;
 };
