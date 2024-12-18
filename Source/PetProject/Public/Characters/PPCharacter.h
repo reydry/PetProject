@@ -72,6 +72,9 @@ private:
 	UPROPERTY()
 	UPPHealthComponent* HealthComponent = nullptr;
 
+	UPROPERTY()
+	UPPCameraLockComponent* CameraLockComponent = nullptr;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<UGameplayAbility>> Abilities;
 
@@ -86,7 +89,4 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<UGameplayEffect>> Effects;
-
-	UPROPERTY()
-	UPPCameraLockComponent* CameraLockComponent = nullptr;
 };

@@ -8,6 +8,7 @@
 #include "PPCharacterSet.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeathDelegateSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLevelUpDelegateSignature);
 
 UCLASS()
 class PETPROJECT_API UPPCharacterSet : public UPPAttributeSet
@@ -26,10 +27,18 @@ public:
 	ATTRIBUTE_ACCESSORS(UPPCharacterSet, Mana);
 	ATTRIBUTE_ACCESSORS(UPPCharacterSet, MaxMana);
 
+	ATTRIBUTE_ACCESSORS(UPPCharacterSet, Xperience);
+	ATTRIBUTE_ACCESSORS(UPPCharacterSet, MaxXperience);
+	
+	ATTRIBUTE_ACCESSORS(UPPCharacterSet, Level);
+
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintAssignable)
 	FOnDeathDelegateSignature OnDeathDelegate;
+
+	UPROPERTY(VisibleAnywhere, BlueprintAssignable)
+	FOnLevelUpDelegateSignature OnLevelUpDelegate;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
@@ -49,4 +58,13 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Mana;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData Xperience;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData MaxXperience;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData Level;
 };

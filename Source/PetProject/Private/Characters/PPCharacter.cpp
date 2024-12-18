@@ -9,6 +9,8 @@
 #include "ItemData/PPItemData.h"
 #include "Components/PPCameraLockComponent.h"
 
+#include "Attributes/PPCharacterSet.h"
+
 APPCharacter::APPCharacter()
 {
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);

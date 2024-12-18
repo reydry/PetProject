@@ -26,4 +26,14 @@ void UPPCharacterSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 	{
 		SetStamina(FMath::Clamp(GetStamina(), 0.0f, GetMaxStamina()));
 	}
+
+	if (Data.EvaluatedData.Attribute == GetXperienceAttribute())
+	{
+		SetXperience(FMath::Clamp(GetXperience(), 0.0f, GetMaxXperience()));
+
+		if (FMath::IsNearlyEqual(GetXperience(), GetMaxXperience()))
+		{
+			OnLevelUpDelegate.Broadcast();
+		}
+	}
 }
