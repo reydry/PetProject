@@ -36,8 +36,6 @@ void UPPHealthComponent::InitializeComponentData(UAbilitySystemComponent* InAbil
 	}
 
 	InAbilitySystem->GetGameplayAttributeValueChangeDelegate(CharacterSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
-	InAbilitySystem->GetGameplayAttributeValueChangeDelegate(CharacterSet->GetManaAttribute()).AddUObject(this, &ThisClass::OnManaChanged);
-	InAbilitySystem->GetGameplayAttributeValueChangeDelegate(CharacterSet->GetStaminaAttribute()).AddUObject(this, &ThisClass::OnStaminaChanged);
 }
 
 void UPPHealthComponent::OnHealthChanged(const FOnAttributeChangeData& Data)
@@ -48,17 +46,4 @@ void UPPHealthComponent::OnHealthChanged(const FOnAttributeChangeData& Data)
 	{
 		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(), FGameplayTag::RequestGameplayTag("Ability.Death"), FGameplayEventData());
 	}
-	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("health = %f"), Data.NewValue));
-}
-
-void UPPHealthComponent::OnManaChanged(const FOnAttributeChangeData& Data)
-{
-	OnAttributeChangedDelegateHandle.Broadcast(Data.NewValue, CharacterSet->GetMaxMana(), Data.Attribute.AttributeName);
-	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("mana = %f"), Data.NewValue));
-}
-
-void UPPHealthComponent::OnStaminaChanged(const FOnAttributeChangeData& Data)
-{
-	OnAttributeChangedDelegateHandle.Broadcast(Data.NewValue, CharacterSet->GetMaxStamina(), Data.Attribute.AttributeName);
-	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("stamina = %f"), Data.NewValue));
 }

@@ -26,8 +26,8 @@ public:
 	void InitializeComponentData(UAbilitySystemComponent* InAbilitySystem);
 
 	virtual void OnHealthChanged(const FOnAttributeChangeData& Data);
-	virtual void OnManaChanged(const FOnAttributeChangeData& Data);
-	virtual void OnStaminaChanged(const FOnAttributeChangeData& Data);
+	//virtual void OnManaChanged(const FOnAttributeChangeData& Data);
+	//virtual void OnStaminaChanged(const FOnAttributeChangeData& Data);
 
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedDelegate OnAttributeChangedDelegateHandle;
