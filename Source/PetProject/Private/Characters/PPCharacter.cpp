@@ -5,7 +5,6 @@
 #include "AbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Components/PPHealthComponent.h"
 #include "ItemData/PPItemData.h"
 #include "Components/PPCameraLockComponent.h"
 
@@ -24,7 +23,6 @@ APPCharacter::APPCharacter()
 	GetCharacterMovement()->bConstrainToPlane = true;
 	GetCharacterMovement()->bSnapToPlaneAtStart = true;
 
-	HealthComponent = CreateDefaultSubobject<UPPHealthComponent>(TEXT("HealthComponent"));
 	CameraLockComponent = CreateDefaultSubobject<UPPCameraLockComponent>(TEXT("CameraLockComponent"));
 
 	PrimaryActorTick.bCanEverTick = true;
@@ -36,7 +34,6 @@ void APPCharacter::PossessedBy(AController* InController)
 	Super::PossessedBy(InController);
 
 	InitAbilitySystem(InController);
-	SetupHealthComponent();
 	SetupAbilities();
 }
 
@@ -195,14 +192,6 @@ void APPCharacter::SetupAbilities()
 		GivePassiveAbility(PassiveAbility);
 	}
 
-}
-
-void APPCharacter::SetupHealthComponent()
-{
-	if (IsValid(HealthComponent))
-	{
-		HealthComponent->InitializeComponentData(AbilitySystemComponent);
-	}
 }
 
 UAbilitySystemComponent* APPCharacter::GetAbilitySystemComponent() const

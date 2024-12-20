@@ -34,7 +34,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
-	void TargetLost();
+	void TargetLost(AActor* DestroyedActor);
 
 	void CheckDistanceToTarget();
 

@@ -1,11 +1,26 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Attributes/PPCharacterSet.h"
+#include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayEffectExtension.h"
 
 UPPCharacterSet::UPPCharacterSet()
 {
 
+}
+
+bool UPPCharacterSet::PreGameplayEffectExecute(FGameplayEffectModCallbackData& Data)
+{
+	if (!Super::PreGameplayEffectExecute(Data))
+	{
+		return false;
+	}
+
+	HealthBeforeChange = GetHealth();
+	StaminaBeforeChange = GetStamina();
+	ManaBeforeChange = GetMana();
+
+	return true;
 }
 
 void UPPCharacterSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
@@ -14,17 +29,37 @@ void UPPCharacterSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
+		FGameplayEffectContextHandle EffectContextHandle = Data.EffectSpec.GetEffectContext();
+		AActor* Instigator = EffectContextHandle.GetInstigator();
+
 		SetHealth(FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth()));
+
+		OnHealthChangedDelegate.Broadcast(Instigator, HealthBeforeChange, GetHealth());
 
 		if (FMath::IsNearlyZero(GetHealth()))
 		{
-			OnDeathDelegate.Broadcast();
+			FGameplayEventData Payload;
+
+			Payload.EventTag = FGameplayTag::RequestGameplayTag("Ability.Death");
+			Payload.Instigator = Instigator;
+			Payload.Target = GetOwningActor();
+
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwningActor(), FGameplayTag::RequestGameplayTag("Ability.Death"), Payload);
 		}
 	}
 
 	if (Data.EvaluatedData.Attribute == GetStaminaAttribute())
 	{
 		SetStamina(FMath::Clamp(GetStamina(), 0.0f, GetMaxStamina()));
+
+		OnStaminaChangedDelegate.Broadcast(StaminaBeforeChange, GetStamina());
+	}
+
+	if (Data.EvaluatedData.Attribute == GetManaAttribute())
+	{
+		SetMana(FMath::Clamp(GetMana(), 0.0f, GetMaxMana()));
+
+		OnManaChangedDelegate.Broadcast(ManaBeforeChange, GetMana());
 	}
 
 	if (Data.EvaluatedData.Attribute == GetXperienceAttribute())

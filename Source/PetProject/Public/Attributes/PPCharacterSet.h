@@ -7,7 +7,9 @@
 #include "AbilitySystemComponent.h"
 #include "PPCharacterSet.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeathDelegateSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnHealthChangedDelegateSignature, AActor*, Instigator, float, OldValue, float, NewValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStaminaChangedDelegateSignature, float, OldValue, float, NewValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnManaChangedDelegateSignature, float, OldValue, float, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLevelUpDelegateSignature);
 
 UCLASS()
@@ -32,13 +34,20 @@ public:
 	
 	ATTRIBUTE_ACCESSORS(UPPCharacterSet, Level);
 
+	virtual bool PreGameplayEffectExecute(FGameplayEffectModCallbackData& Data) override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintAssignable)
-	FOnDeathDelegateSignature OnDeathDelegate;
+	FOnLevelUpDelegateSignature OnLevelUpDelegate;
 
 	UPROPERTY(VisibleAnywhere, BlueprintAssignable)
-	FOnLevelUpDelegateSignature OnLevelUpDelegate;
+	FOnHealthChangedDelegateSignature OnHealthChangedDelegate;
+
+	UPROPERTY(VisibleAnywhere, BlueprintAssignable)
+	FOnStaminaChangedDelegateSignature OnStaminaChangedDelegate;
+
+	UPROPERTY(VisibleAnywhere, BlueprintAssignable)
+	FOnManaChangedDelegateSignature OnManaChangedDelegate;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
@@ -67,4 +76,8 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Level;
+
+	float HealthBeforeChange;
+	float StaminaBeforeChange;
+	float ManaBeforeChange;
 };

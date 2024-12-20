@@ -53,7 +53,6 @@ protected:
 	bool bIsDummy = false;
 
 	void SetupAbilities();
-	void SetupHealthComponent();
 
 	void InitAbilitySystem(AController* InController);
 
@@ -68,9 +67,6 @@ protected:
 private:
 	UPROPERTY()
 	UAbilitySystemComponent* AbilitySystemComponent = nullptr;
-
-	UPROPERTY()
-	UPPHealthComponent* HealthComponent = nullptr;
 
 	UPROPERTY()
 	UPPCameraLockComponent* CameraLockComponent = nullptr;

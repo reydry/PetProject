@@ -67,11 +67,11 @@ void UPPCameraLockComponent::CheckDistanceToTarget()
 
 	if (Distance > DistanceThreshold)
 	{
-		TargetLost();
+		TargetLost(Target);
 	}
 }
 
-void UPPCameraLockComponent::TargetLost()
+void UPPCameraLockComponent::TargetLost(AActor* DestroyedActor)
 {
 	UnSubscribeFromDelegates();
 
@@ -85,21 +85,7 @@ void UPPCameraLockComponent::SubscribeToDelegates()
 		return;
 	}
 
-	UAbilitySystemComponent* AbilitySystem = Target->GetAbilitySystemComponent();
-
-	if (!IsValid(AbilitySystem))
-	{
-		return;
-	}
-
-	UPPCharacterSet* AttributeSet = const_cast<UPPCharacterSet*>(AbilitySystem->GetSet<UPPCharacterSet>());
-
-	if (!IsValid(AttributeSet))
-	{
-		return;
-	}
-
-	AttributeSet->OnDeathDelegate.AddUniqueDynamic(this, &ThisClass::TargetLost);
+	Target->OnDestroyed.AddUniqueDynamic(this, &ThisClass::TargetLost);
 }
 
 void UPPCameraLockComponent::UnSubscribeFromDelegates()
@@ -109,21 +95,7 @@ void UPPCameraLockComponent::UnSubscribeFromDelegates()
 		return;
 	}
 
-	UAbilitySystemComponent* AbilitySystem = Target->GetAbilitySystemComponent();
-
-	if (!IsValid(AbilitySystem))
-	{
-		return;
-	}
-
-	UPPCharacterSet* AttributeSet = const_cast<UPPCharacterSet*>(AbilitySystem->GetSet<UPPCharacterSet>());
-
-	if (!IsValid(AttributeSet))
-	{
-		return;
-	}
-
-	AttributeSet->OnDeathDelegate.RemoveDynamic(this, &ThisClass::TargetLost);
+	Target->OnDestroyed.RemoveDynamic(this, &ThisClass::TargetLost);
 }
 
 void UPPCameraLockComponent::UpdateCameraRotation()
