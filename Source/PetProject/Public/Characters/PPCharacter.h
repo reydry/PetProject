@@ -13,7 +13,6 @@ class UAbilitySystemComponent;
 class UGameplayAbility;
 class UGameplayEffect;
 class UPPCharacterSet;
-class UPPHealthComponent;
 class UPPCameraLockComponent;
 
 UCLASS()

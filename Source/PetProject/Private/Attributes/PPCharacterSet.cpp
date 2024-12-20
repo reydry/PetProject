@@ -9,20 +9,6 @@ UPPCharacterSet::UPPCharacterSet()
 
 }
 
-bool UPPCharacterSet::PreGameplayEffectExecute(FGameplayEffectModCallbackData& Data)
-{
-	if (!Super::PreGameplayEffectExecute(Data))
-	{
-		return false;
-	}
-
-	HealthBeforeChange = GetHealth();
-	StaminaBeforeChange = GetStamina();
-	ManaBeforeChange = GetMana();
-
-	return true;
-}
-
 void UPPCharacterSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
@@ -34,7 +20,7 @@ void UPPCharacterSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 
 		SetHealth(FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth()));
 
-		OnHealthChangedDelegate.Broadcast(Instigator, HealthBeforeChange, GetHealth());
+		OnHealthChangedDelegate.Broadcast(Instigator, GetHealth(), GetMaxHealth());
 
 		if (FMath::IsNearlyZero(GetHealth()))
 		{
@@ -52,14 +38,14 @@ void UPPCharacterSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 	{
 		SetStamina(FMath::Clamp(GetStamina(), 0.0f, GetMaxStamina()));
 
-		OnStaminaChangedDelegate.Broadcast(StaminaBeforeChange, GetStamina());
+		OnStaminaChangedDelegate.Broadcast(GetStamina(), GetMaxStamina());
 	}
 
 	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
 		SetMana(FMath::Clamp(GetMana(), 0.0f, GetMaxMana()));
 
-		OnManaChangedDelegate.Broadcast(ManaBeforeChange, GetMana());
+		OnManaChangedDelegate.Broadcast(GetMana(), GetMaxMana());
 	}
 
 	if (Data.EvaluatedData.Attribute == GetXperienceAttribute())
