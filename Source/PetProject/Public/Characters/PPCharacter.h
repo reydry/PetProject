@@ -13,7 +13,6 @@ class UAbilitySystemComponent;
 class UGameplayAbility;
 class UGameplayEffect;
 class UPPCharacterSet;
-class UPPHealthComponent;
 class UPPCameraLockComponent;
 
 UCLASS()
@@ -53,7 +52,6 @@ protected:
 	bool bIsDummy = false;
 
 	void SetupAbilities();
-	void SetupHealthComponent();
 
 	void InitAbilitySystem(AController* InController);
 
@@ -70,7 +68,7 @@ private:
 	UAbilitySystemComponent* AbilitySystemComponent = nullptr;
 
 	UPROPERTY()
-	UPPHealthComponent* HealthComponent = nullptr;
+	UPPCameraLockComponent* CameraLockComponent = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<UGameplayAbility>> Abilities;
@@ -86,7 +84,4 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<UGameplayEffect>> Effects;
-
-	UPROPERTY()
-	UPPCameraLockComponent* CameraLockComponent = nullptr;
 };

@@ -10,12 +10,16 @@ APPPlayerState::APPPlayerState(const FObjectInitializer& ObjectInitializer)
 {
 	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>("AbilitySystemComponent");
 	CharacterSet = CreateDefaultSubobject<UPPCharacterSet>("CharacterSet");
-	SoulsSet = CreateDefaultSubobject<UPPSoulsSet>("SoulsSet");
 }
 
 UAbilitySystemComponent* APPPlayerState::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
+}
+
+UPPCharacterSet* APPPlayerState::GetCharacterSet()
+{
+	return CharacterSet;
 }
 
 void APPPlayerState::BeginPlay()

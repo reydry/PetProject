@@ -7,7 +7,10 @@
 #include "AbilitySystemComponent.h"
 #include "PPCharacterSet.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeathDelegateSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnHealthChangedDelegateSignature, AActor*, Instigator, float, NewValue, float, MaxValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStaminaChangedDelegateSignature, float, NewValue, float, MaxValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnManaChangedDelegateSignature, float, NewValue, float, MaxValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLevelUpDelegateSignature);
 
 UCLASS()
 class PETPROJECT_API UPPCharacterSet : public UPPAttributeSet
@@ -26,10 +29,24 @@ public:
 	ATTRIBUTE_ACCESSORS(UPPCharacterSet, Mana);
 	ATTRIBUTE_ACCESSORS(UPPCharacterSet, MaxMana);
 
+	ATTRIBUTE_ACCESSORS(UPPCharacterSet, Xperience);
+	ATTRIBUTE_ACCESSORS(UPPCharacterSet, MaxXperience);
+	
+	ATTRIBUTE_ACCESSORS(UPPCharacterSet, Level);
+
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintAssignable)
-	FOnDeathDelegateSignature OnDeathDelegate;
+	FOnLevelUpDelegateSignature OnLevelUpDelegate;
+
+	UPROPERTY(VisibleAnywhere, BlueprintAssignable)
+	FOnHealthChangedDelegateSignature OnHealthChangedDelegate;
+
+	UPROPERTY(VisibleAnywhere, BlueprintAssignable)
+	FOnStaminaChangedDelegateSignature OnStaminaChangedDelegate;
+
+	UPROPERTY(VisibleAnywhere, BlueprintAssignable)
+	FOnManaChangedDelegateSignature OnManaChangedDelegate;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
@@ -49,4 +66,17 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Mana;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData Xperience;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData MaxXperience;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData Level;
+
+	float HealthBeforeChange;
+	float StaminaBeforeChange;
+	float ManaBeforeChange;
 };
