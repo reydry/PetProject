@@ -75,8 +75,4 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Level;
-
-	float HealthBeforeChange;
-	float StaminaBeforeChange;
-	float ManaBeforeChange;
 };
