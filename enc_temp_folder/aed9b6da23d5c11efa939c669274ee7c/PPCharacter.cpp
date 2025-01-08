@@ -9,7 +9,7 @@
 #include "Components/PPCameraLockComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
-#include "EnhancedInputComponent.h"
+
 #include "Attributes/PPCharacterSet.h"
 
 APPCharacter::APPCharacter()
@@ -211,19 +211,4 @@ void APPCharacter::SetupAbilities()
 UAbilitySystemComponent* APPCharacter::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
-}
-
-void APPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
-	{
-		EnhancedInputComponent->BindAction()
-
-		for (auto Ability : Abilities)
-		{
-			AbilitySystemComponent->BindAbiliy
-		}
-	}
 }

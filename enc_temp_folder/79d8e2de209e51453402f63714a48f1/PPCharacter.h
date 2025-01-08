@@ -16,7 +16,6 @@ class UGameplayAbility;
 class UGameplayEffect;
 class UPPCharacterSet;
 class UPPCameraLockComponent;
-class UInputComponent;
 
 UCLASS()
 class PETPROJECT_API APPCharacter : public ACharacter, public IAbilitySystemInterface
@@ -28,8 +27,6 @@ public:
 
 	virtual void PossessedBy(AController* InController) override;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
 	UFUNCTION(BlueprintCallable)

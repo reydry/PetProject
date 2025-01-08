@@ -10,6 +10,7 @@
 
 class UPPCharacterSet;
 class UPPSoulsSet;
+class UPPWeaponSet;
 
 UENUM(BlueprintType)
 enum class EPPTeam : uint8
@@ -46,4 +47,7 @@ private:
 
 	UPROPERTY()
 	UPPCharacterSet* CharacterSet;
+
+	UPROPERTY()
+	UPPWeaponSet* WeaponSet;
 };
