@@ -9,11 +9,14 @@
 #include "PPinventoryComponent.h"
 #include "PPCharacter.generated.h"
 
+class UCameraComponent;
+class USpringArmComponent;
 class UAbilitySystemComponent;
 class UGameplayAbility;
 class UGameplayEffect;
 class UPPCharacterSet;
 class UPPCameraLockComponent;
+class UInputComponent;
 
 UCLASS()
 class PETPROJECT_API APPCharacter : public ACharacter, public IAbilitySystemInterface
@@ -25,6 +28,8 @@ public:
 
 	virtual void PossessedBy(AController* InController) override;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
 	UFUNCTION(BlueprintCallable)
@@ -69,6 +74,12 @@ private:
 
 	UPROPERTY()
 	UPPCameraLockComponent* CameraLockComponent = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UCameraComponent* TopDownCameraComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	USpringArmComponent* CameraBoom;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<UGameplayAbility>> Abilities;

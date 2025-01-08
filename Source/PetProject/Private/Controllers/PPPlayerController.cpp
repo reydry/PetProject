@@ -72,8 +72,9 @@ void APPPlayerController::LookInput(const FInputActionValue& InputActionValue)
 	if (IsValid(MyPawn))
 	{
 		GetHitResultUnderCursorByChannel(ETraceTypeQuery::TraceTypeQuery1, false, Hit);
-
-		CursorRotation.Yaw = UKismetMathLibrary::FindLookAtRotation(MyPawn->GetActorLocation(), Hit.ImpactPoint).Yaw;
+	
+		CursorRotation.Yaw = UKismetMathLibrary::FindLookAtRotation(MyPawn->GetActorLocation(), Hit.Location).Yaw;
 		MyPawn->SetActorRotation(CursorRotation);
+		SetControlRotation(CursorRotation);
 	}
 }

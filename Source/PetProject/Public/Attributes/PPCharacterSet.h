@@ -9,7 +9,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnHealthChangedDelegateSignature, AActor*, Instigator, float, NewValue, float, MaxValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStaminaChangedDelegateSignature, float, NewValue, float, MaxValue);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnManaChangedDelegateSignature, float, NewValue, float, MaxValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnManaChangedDelegateSignature, float, NewValue, float, MaxValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLevelUpDelegateSignature);
 
 UCLASS()
@@ -75,8 +75,4 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Level;
-
-	float HealthBeforeChange;
-	float StaminaBeforeChange;
-	float ManaBeforeChange;
 };

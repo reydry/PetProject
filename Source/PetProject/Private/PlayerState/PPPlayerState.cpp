@@ -5,11 +5,13 @@
 #include "AbilitySystemComponent.h"
 #include "Attributes/PPSoulsSet.h"
 #include "Attributes/PPCharacterSet.h"
+#include "Attributes/PPWeaponSet.h"
 
 APPPlayerState::APPPlayerState(const FObjectInitializer& ObjectInitializer)
 {
 	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>("AbilitySystemComponent");
 	CharacterSet = CreateDefaultSubobject<UPPCharacterSet>("CharacterSet");
+	WeaponSet = CreateDefaultSubobject<UPPWeaponSet>("WeaponSet");
 }
 
 UAbilitySystemComponent* APPPlayerState::GetAbilitySystemComponent() const
