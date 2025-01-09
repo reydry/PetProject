@@ -11,6 +11,7 @@
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
 #include "Attributes/PPCharacterSet.h"
+#include "Components/PPHeroComponent.h"
 
 APPCharacter::APPCharacter()
 {
@@ -39,6 +40,8 @@ APPCharacter::APPCharacter()
 
 	CameraLockComponent = CreateDefaultSubobject<UPPCameraLockComponent>(TEXT("CameraLockComponent"));
 
+	HeroComponent = CreateDefaultSubobject<UPPHeroComponent>(TEXT("HeroComponent"));
+
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
 }
@@ -48,7 +51,11 @@ void APPCharacter::PossessedBy(AController* InController)
 	Super::PossessedBy(InController);
 
 	InitAbilitySystem(InController);
-	SetupAbilities();
+
+	for (auto Input : InputConfig->Inputs)
+	{
+		GiveAbility(Input.Ability, 0, static_cast<int32>(Input.AbilityInputID));
+	}
 }
 
 void APPCharacter::InitAbilitySystem(AController* InController)
@@ -111,11 +118,11 @@ TSubclassOf<UGameplayAbility> APPCharacter::GetAbility(EItemType ItemType)
 	return TSubclassOf<UGameplayAbility>();
 }
 
-void APPCharacter::GiveAbility(TSubclassOf<UGameplayAbility> InAbility)
+void APPCharacter::GiveAbility(TSubclassOf<UGameplayAbility> InAbility, int32 Level, int32 InputID)
 {
 	if (IsValid(AbilitySystemComponent) && IsValid(InAbility))
 	{
-		FGameplayAbilitySpec AbilitySpec(InAbility);
+		FGameplayAbilitySpec AbilitySpec(InAbility, Level, InputID);
 		FGameplayAbilitySpecHandle AbilitySpecHandle = AbilitySystemComponent->GiveAbility(AbilitySpec);
 		GivenAbilities.Add(InAbility, AbilitySpecHandle);
 	}
@@ -194,18 +201,9 @@ void APPCharacter::RemoveAbilities()
 	}
 }
 
-void APPCharacter::SetupAbilities()
+void APPCharacter::ActivateAbilityFromInputID(int32 InputID)
 {
-	for (TSubclassOf<UGameplayAbility>& Ability : Abilities)
-	{
-		GiveAbility(Ability);
-	}
-
-	for (TSubclassOf<UGameplayAbility>& PassiveAbility : PassiveAbilities)
-	{
-		GivePassiveAbility(PassiveAbility);
-	}
-
+	AbilitySystemComponent->PressInputID(InputID);
 }
 
 UAbilitySystemComponent* APPCharacter::GetAbilitySystemComponent() const
@@ -217,13 +215,24 @@ void APPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	if (IsValid(HeroComponent))
 	{
-		EnhancedInputComponent->BindAction()
-
-		for (auto Ability : Abilities)
-		{
-			AbilitySystemComponent->BindAbiliy
-		}
+		HeroComponent->InitializePlayerInput(PlayerInputComponent);
 	}
+	//if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	//{
+	//	for (auto Input : InputConfig->Inputs)
+	//	{
+	//		if (!Input.bPassive)
+	//		{
+	//			EnhancedInputComponent->BindAction(Input.InputAction, Input.TriggerEvent, this, &ThisClass::ActivateAbilityFromInputID, static_cast<int32>(Input.AbilityInputID));
+	//		}
+	//		GiveAbility(Input.Ability, 1, static_cast<int32>(Input.AbilityInputID));
+	//	}
+	//}
+}
+
+UPPAbilityInputConfig* APPCharacter::GetInputConfig()
+{
+	return InputConfig;
 }

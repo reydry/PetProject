@@ -7,6 +7,7 @@
 #include "AbilitySystemInterface.h"
 #include "GameplayAbilitySpec.h"
 #include "PPinventoryComponent.h"
+#include "Utils/PPUtils.h"
 #include "PPCharacter.generated.h"
 
 class UCameraComponent;
@@ -17,6 +18,7 @@ class UGameplayEffect;
 class UPPCharacterSet;
 class UPPCameraLockComponent;
 class UInputComponent;
+
 
 UCLASS()
 class PETPROJECT_API APPCharacter : public ACharacter, public IAbilitySystemInterface
@@ -31,9 +33,11 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UPPAbilityInputConfig* GetInputConfig();
+
 protected:
 	UFUNCTION(BlueprintCallable)
-	void GiveAbility(TSubclassOf<UGameplayAbility> InAbility);
+	void GiveAbility(TSubclassOf<UGameplayAbility> InAbility, int32 Level, int32 InputID);
 
 	UFUNCTION(BlueprintCallable)
 	void RemoveAbility(TSubclassOf<UGameplayAbility> InAbility);
@@ -53,10 +57,11 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void RemoveAbilities();
 
+	UFUNCTION()
+	void ActivateAbilityFromInputID(int32 InputID);
+
 	UPROPERTY(EditDefaultsOnly)
 	bool bIsDummy = false;
-
-	void SetupAbilities();
 
 	void InitAbilitySystem(AController* InController);
 
@@ -81,6 +86,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* CameraBoom;
 
+	UPROPERTY()
+	class UPPHeroComponent* HeroComponent;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<UGameplayAbility>> Abilities;
 
@@ -95,4 +103,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<UGameplayEffect>> Effects;
+
+	UPROPERTY(EditDefaultsOnly)
+	UPPAbilityInputConfig* InputConfig;
 };
