@@ -16,31 +16,37 @@ UPPHeroComponent* UPPHeroComponent::GetHeroComponent(const AActor* Actor)
 	return Actor ? Actor->FindComponentByClass<UPPHeroComponent>() : nullptr;
 }
 
-void UPPHeroComponent::AddAdditionalInputConfig(UPPAbilityInputConfig* InputConfig)
+void UPPHeroComponent::AddAdditionalInputConfig(UPPAbilityInputConfig* InConfig)
 {
 	if (APawn* Pawn = GetOwner<APawn>())
 	{
-		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(Pawn->InputComponent))
+		for (FPPAbilityInput& Input : InConfig->Inputs)
 		{
-			for (auto Input : InputConfig->Inputs)
-			{
-				FInputBindingHandle BindingHandle = EnhancedInputComponent->BindAction(Input.InputAction, Input.TriggerEvent, this, &UPPHeroComponent::AbilityInputPressed, static_cast<int32>(Input.AbilityInputID));
-				TemporaryBindings.Add(Input.AbilityInputID, BindingHandle);
-			}
+			TArray<FInputBindingHandle> BindingHandles = BindAbilityAction(Input, this, &ThisClass::AbilityInputPressed, &ThisClass::AbilityInputReleased, Pawn->InputComponent);
+			TemporaryBindings.Add(Input.AbilityInputID, BindingHandles);
 		}
 	}
 }
 
-void UPPHeroComponent::RemoveInputConfig(UPPAbilityInputConfig* InputConfig)
+void UPPHeroComponent::RemoveInputConfig(UPPAbilityInputConfig* InConfig)
 {
 	if (APawn* Pawn = GetOwner<APawn>())
 	{
 		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(Pawn->InputComponent))
 		{
-			for (auto Input : InputConfig->Inputs)
+			for (FPPAbilityInput& Input : InConfig->Inputs)
 			{
-				FInputBindingHandle BindingHandle = *TemporaryBindings.Find(Input.AbilityInputID);
-				EnhancedInputComponent->RemoveBinding(BindingHandle);
+				TArray<FInputBindingHandle>* BindingHandles = TemporaryBindings.Find(Input.AbilityInputID);
+				
+				if (BindingHandles)
+				{
+					for (FInputBindingHandle Handle : *BindingHandles)
+					{
+						EnhancedInputComponent->RemoveBinding(Handle);
+					}
+					
+					TemporaryBindings.Remove(Input.AbilityInputID);
+				}
 			}
 		}
 	}
@@ -48,25 +54,14 @@ void UPPHeroComponent::RemoveInputConfig(UPPAbilityInputConfig* InputConfig)
 
 void UPPHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComponent)
 {
-	APPCharacter* Character = GetOwner<APPCharacter>();
-
-	if (!IsValid(Character))
+	if (!IsValid(InputConfig))
 	{
 		return;
 	}
-
-	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-	UPPAbilityInputConfig* InputConfig = Character->GetInputConfig();
 	
-	if (!IsValid(InputConfig) || !IsValid(EnhancedInputComponent))
+	for (FPPAbilityInput& Input : InputConfig->Inputs)
 	{
-		return;
-	}
-
-	for (auto Input : InputConfig->Inputs)
-	{
-		if(!Input.bPassive)
-		EnhancedInputComponent->BindAction(Input.InputAction, Input.TriggerEvent, this, &ThisClass::AbilityInputPressed, static_cast<int32>(Input.AbilityInputID));
+		BindAbilityAction(Input, this, &ThisClass::AbilityInputPressed, &ThisClass::AbilityInputReleased, PlayerInputComponent);
 	}
 }
 
@@ -92,7 +87,27 @@ void UPPHeroComponent::AbilityInputReleased(int32 InputID)
 	}
 }
 
-void UPPHeroComponent::BeginPlay()
+template<class UserClass, typename PressedFuncType, typename ReleasedFuncType>
+TArray<FInputBindingHandle> UPPHeroComponent::BindAbilityAction(const FPPAbilityInput InputConfig, UserClass* Object, PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc, UInputComponent* PlayerInputComponent)
 {
-	Super::BeginPlay();
+	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
+
+	if (!IsValid(EnhancedInputComponent))
+	{
+		return TArray<FInputBindingHandle>();
+	}
+
+	TArray<FInputBindingHandle> BindingHandles;
+
+	if (ReleasedFunc)
+	{
+		BindingHandles.Add(EnhancedInputComponent->BindAction(InputConfig.InputAction, InputConfig.ReleasedEvent, this, &ThisClass::AbilityInputReleased, static_cast<int32>(InputConfig.AbilityInputID)));
+	}
+
+	if (PressedFunc)
+	{
+		BindingHandles.Add(EnhancedInputComponent->BindAction(InputConfig.InputAction, InputConfig.PressedEvent, this, &ThisClass::AbilityInputPressed, static_cast<int32>(InputConfig.AbilityInputID)));
+	}
+
+	return BindingHandles;
 }

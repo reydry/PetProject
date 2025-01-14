@@ -33,6 +33,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	UPPCharacterSet* GetCharacterSet();
 
+	UFUNCTION(BlueprintPure)
+	bool IsAbilityActive(TSubclassOf<UGameplayAbility> InAbilityClass) const;
+
 protected:
 	virtual void BeginPlay() override;
 

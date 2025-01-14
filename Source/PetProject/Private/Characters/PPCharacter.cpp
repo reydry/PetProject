@@ -52,10 +52,7 @@ void APPCharacter::PossessedBy(AController* InController)
 
 	InitAbilitySystem(InController);
 
-	for (auto Input : InputConfig->Inputs)
-	{
-		GiveAbility(Input.Ability, 0, static_cast<int32>(Input.AbilityInputID));
-	}
+	SetupAbilities();
 }
 
 void APPCharacter::InitAbilitySystem(AController* InController)
@@ -72,16 +69,6 @@ void APPCharacter::InitAbilitySystem(AController* InController)
 	if (IsValid(AbilitySystemComponent))
 	{
 		AbilitySystemComponent->InitAbilityActorInfo(this, this);
-	}
-}
-
-void APPCharacter::GivePassiveAbility(TSubclassOf<UGameplayAbility> InAbility)
-{
-	if (IsValid(AbilitySystemComponent) && IsValid(InAbility))
-	{
-		FGameplayAbilitySpec AbilitySpec(InAbility);
-		FGameplayAbilitySpecHandle AbilitySpecHandle = AbilitySystemComponent->GiveAbilityAndActivateOnce(AbilitySpec);
-		GivenAbilities.Add(InAbility, AbilitySpecHandle);
 	}
 }
 
@@ -103,6 +90,14 @@ void APPCharacter::GetActiveAbilitiesWithTags(FGameplayTagContainer AbilityTagCo
 		{
 			ActiveAbilities.Add(Ability);
 		}
+	}
+}
+
+void APPCharacter::SetupAbilities()
+{
+	for (TPair<TSubclassOf<UGameplayAbility>, EPPAbilityInputID>& Ability : Abilities)
+	{
+		GiveAbility(Ability.Key, 0, static_cast<int32>(Ability.Value));
 	}
 }
 
@@ -138,72 +133,12 @@ void APPCharacter::RemoveAbility(TSubclassOf<UGameplayAbility> InAbility)
 	}
 }
 
-bool APPCharacter::IsAbilityActive(TSubclassOf<UGameplayAbility> InAbilityClass)
-{
-	if (!IsValid(InAbilityClass) || !IsValid(AbilitySystemComponent))
-	{
-		return false;
-	}
-
-	FGameplayAbilitySpec* Spec = AbilitySystemComponent->FindAbilitySpecFromClass(InAbilityClass);
-
-	if (Spec)
-	{
-		return Spec->IsActive();
-	}
-
-	return false;
-}
-
-void APPCharacter::ActivateAbility(TSubclassOf<UGameplayAbility> InAbility)
-{
-	if (!IsValid(InAbility) || !IsValid(AbilitySystemComponent))
-	{
-		return;
-	}
-
-	FGameplayAbilitySpecHandle* Ability = GivenAbilities.Find(InAbility);
-
-	if (Ability)
-	{
-		AbilitySystemComponent->TryActivateAbility(*Ability);
-	}
-}
-
-void APPCharacter::ActivateAbilityWithTag(FGameplayTagContainer AbilityTagContainer)
-{
-	if (IsValid(AbilitySystemComponent))
-	{
-		AbilitySystemComponent->TryActivateAbilitiesByTag(AbilityTagContainer);
-	}
-}
-
-void APPCharacter::CancelAbility(TSubclassOf<UGameplayAbility> InAbility)
-{
-	if (!IsValid(InAbility) || !IsValid(AbilitySystemComponent))
-	{
-		return;
-	}
-
-	FGameplayAbilitySpecHandle *Ability = GivenAbilities.Find(InAbility);
-
-	if (Ability)
-	{
-		AbilitySystemComponent->CancelAbilityHandle(*Ability);
-	}
-}
-
 void APPCharacter::RemoveAbilities()
 {
 	for (TTuple<TSubclassOf<UGameplayAbility>, FGameplayAbilitySpecHandle>& Ability : GivenAbilities)
 	{
 		AbilitySystemComponent->ClearAbility(Ability.Value);
 	}
-}
-
-void APPCharacter::ActivateAbilityFromInputID(int32 InputID)
-{
-	AbilitySystemComponent->PressInputID(InputID);
 }
 
 UAbilitySystemComponent* APPCharacter::GetAbilitySystemComponent() const
@@ -219,20 +154,4 @@ void APPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	{
 		HeroComponent->InitializePlayerInput(PlayerInputComponent);
 	}
-	//if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
-	//{
-	//	for (auto Input : InputConfig->Inputs)
-	//	{
-	//		if (!Input.bPassive)
-	//		{
-	//			EnhancedInputComponent->BindAction(Input.InputAction, Input.TriggerEvent, this, &ThisClass::ActivateAbilityFromInputID, static_cast<int32>(Input.AbilityInputID));
-	//		}
-	//		GiveAbility(Input.Ability, 1, static_cast<int32>(Input.AbilityInputID));
-	//	}
-	//}
-}
-
-UPPAbilityInputConfig* APPCharacter::GetInputConfig()
-{
-	return InputConfig;
 }

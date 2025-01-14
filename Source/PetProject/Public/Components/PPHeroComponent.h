@@ -32,8 +32,13 @@ public:
 	void AbilityInputPressed(int32 InputID);
 	void AbilityInputReleased(int32 InputID);
 
-protected:
-	virtual void BeginPlay() override;
+	UPROPERTY(EditDefaultsOnly)
+	UPPAbilityInputConfig* InputConfig;
 
-	TMap<PPAbilityInputID, FInputBindingHandle> TemporaryBindings;
+protected:
+	template<class UserClass, typename PressedFuncType, typename ReleasedFuncType>
+	TArray<FInputBindingHandle> BindAbilityAction(const FPPAbilityInput InputConfig, UserClass* Object, PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc, UInputComponent* PlayerInputComponent);
+
+
+	TMap<EPPAbilityInputID, TArray<FInputBindingHandle>> TemporaryBindings;
 };

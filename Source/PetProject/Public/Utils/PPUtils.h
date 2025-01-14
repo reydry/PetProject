@@ -9,12 +9,17 @@
 class UGameplayAbility;
 
 UENUM()
-enum class PPAbilityInputID
+enum class EPPAbilityInputID
 {
 	None,
-	Ability1,
-	Ability2,
-	Ability3
+	Primary_Single,
+	Primary_Auto,
+	Secondary,
+	Dash,
+	Ultimate_Aim,
+	Ultimate_Fire,
+	Collect,
+	QuickReload,
 };
 
 USTRUCT()
@@ -23,19 +28,16 @@ struct FPPAbilityInput
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly)
-	PPAbilityInputID AbilityInputID = PPAbilityInputID::None;
+	EPPAbilityInputID AbilityInputID = EPPAbilityInputID::None;
 
 	UPROPERTY(EditDefaultsOnly)
 	UInputAction* InputAction = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
-	ETriggerEvent TriggerEvent = ETriggerEvent::None;
+	ETriggerEvent PressedEvent = ETriggerEvent::None;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UGameplayAbility> Ability;
-
-	UPROPERTY(EditDefaultsOnly)
-	bool bPassive = false;
+	ETriggerEvent ReleasedEvent = ETriggerEvent::None;
 };
 
 UCLASS(BlueprintType)
@@ -46,29 +48,18 @@ class UPPAbilityInputConfig : public UDataAsset
 public:
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FPPAbilityInput> Inputs;
+};
 
-	//UPROPERTY(EditDefaultsOnly)
-	//PPAbilityInputID AbilityInputID = PPAbilityInputID::None;
+UCLASS(BlueprintType)
+class UPPUtils : public UObject
+{
+	GENERATED_BODY()
 
-	//UPROPERTY(EditDefaultsOnly)
-	//UInputAction* InputAction = nullptr;
+public:
+	UFUNCTION(BlueprintPure, Category = "Utils|Trace")
+	static FVector CalculateEndLine(const APlayerController* InController);
 
-	//UPROPERTY(EditDefaultsOnly)
-	//ETriggerEvent TriggerEvent = ETriggerEvent::None;
-	//PPAbilityInputID AbilityInputID = PPAbilityInputID::None;
-
-	//UPROPERTY(EditDefaultsOnly)
-	//PPAbilityInputID AbilityInputID = PPAbilityInputID::None;
-
-	//UPROPERTY(EditDefaultsOnly)
-	//PPAbilityInputID AbilityInputID = PPAbilityInputID::None;
-
-	//UPROPERTY(EditDefaultsOnly)
-	//PPAbilityInputID AbilityInputID = PPAbilityInputID::None;
-	//
-	//UPROPERTY(EditDefaultsOnly)
-	//PPAbilityInputID AbilityInputID = PPAbilityInputID::None;
-
-	//UPROPERTY(EditDefaultsOnly)
-	//PPAbilityInputID AbilityInputID = PPAbilityInputID::None;
+private:
+	static FVector GetLocationUnderCursor(const APlayerController* InController);
+	static FVector GetCameraLocation(const APlayerController* InController);
 };
