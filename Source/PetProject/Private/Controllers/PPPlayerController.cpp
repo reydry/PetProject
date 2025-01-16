@@ -7,6 +7,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "GameFramework/PlayerController.h"
+#include "GameFramework/InputSettings.h"
 
 APPPlayerController::APPPlayerController()
 {
@@ -19,7 +21,7 @@ void APPPlayerController::BeginPlay()
 
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
 
-	if (Subsystem)
+	if (IsValid(Subsystem))
 	{
 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
 	}
@@ -35,6 +37,7 @@ void APPPlayerController::SetupInputComponent()
 	{
 		EnhancedInputComponent->BindAction(Movement, ETriggerEvent::Triggered, this, &ThisClass::MoveInput);
 		EnhancedInputComponent->BindAction(Look, ETriggerEvent::Triggered, this, &ThisClass::LookInput);
+		EnhancedInputComponent->BindAction(IA_Look_Gamepad, ETriggerEvent::Triggered, this, &ThisClass::Look_Gamepad);
 	}
 }
 
@@ -75,6 +78,20 @@ void APPPlayerController::LookInput(const FInputActionValue& InputActionValue)
 	
 		CursorRotation.Yaw = UKismetMathLibrary::FindLookAtRotation(MyPawn->GetActorLocation(), Hit.Location).Yaw;
 		MyPawn->SetActorRotation(CursorRotation);
-		SetControlRotation(CursorRotation);
 	}
+}
+
+void APPPlayerController::Look_Gamepad(const FInputActionValue& InputActionValue)
+{
+	APawn* MyPawn = Cast<APawn>(GetPawn());
+
+	if (!IsValid(MyPawn))
+	{
+		return;
+	}
+
+	FVector2D Direction = InputActionValue.Get<FVector2D>();
+	float angle = FMath::Atan2(Direction.X, -Direction.Y) * 180 / PI;
+	
+	MyPawn->SetActorRotation(FRotator(0.0f, angle, 0.f));
 }

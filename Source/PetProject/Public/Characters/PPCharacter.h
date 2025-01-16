@@ -7,6 +7,7 @@
 #include "AbilitySystemInterface.h"
 #include "GameplayAbilitySpec.h"
 #include "PPinventoryComponent.h"
+#include "Utils/PPUtils.h"
 #include "PPCharacter.generated.h"
 
 class UCameraComponent;
@@ -17,6 +18,8 @@ class UGameplayEffect;
 class UPPCharacterSet;
 class UPPCameraLockComponent;
 class UInputComponent;
+class UPPHeroComponent;
+class UPPAbilityInputConfig;
 
 UCLASS()
 class PETPROJECT_API APPCharacter : public ACharacter, public IAbilitySystemInterface
@@ -33,22 +36,10 @@ public:
 
 protected:
 	UFUNCTION(BlueprintCallable)
-	void GiveAbility(TSubclassOf<UGameplayAbility> InAbility);
+	void GiveAbility(TSubclassOf<UGameplayAbility> InAbility, int32 Level, int32 InputID);
 
 	UFUNCTION(BlueprintCallable)
 	void RemoveAbility(TSubclassOf<UGameplayAbility> InAbility);
-
-	UFUNCTION(BlueprintCallable)
-	bool IsAbilityActive(TSubclassOf<UGameplayAbility> InAbilityClass);
-
-	UFUNCTION(BlueprintCallable)
-	void ActivateAbility(TSubclassOf<UGameplayAbility> InAbility);
-
-	UFUNCTION(BlueprintCallable)
-	void ActivateAbilityWithTag(FGameplayTagContainer AbilityTagContainer);
-
-	UFUNCTION(BlueprintCallable)
-	void CancelAbility(TSubclassOf<UGameplayAbility> InAbility);
 
 	UFUNCTION(BlueprintCallable)
 	void RemoveAbilities();
@@ -56,14 +47,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	bool bIsDummy = false;
 
-	void SetupAbilities();
-
 	void InitAbilitySystem(AController* InController);
-
-	void GivePassiveAbility(TSubclassOf<UGameplayAbility> InAbility);
 
 	UFUNCTION(BlueprintCallable)
 	void GetActiveAbilitiesWithTags(FGameplayTagContainer AbilityTagContainer, TArray<UGameplayAbility*>& ActiveAbilities);
+
+	void SetupAbilities();
 
 	UFUNCTION(BlueprintPure)
 	TSubclassOf<UGameplayAbility> GetAbility(EItemType ItemType);
@@ -76,23 +65,20 @@ private:
 	UPPCameraLockComponent* CameraLockComponent = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPPHeroComponent* HeroComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* TopDownCameraComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* CameraBoom;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
-	TArray<TSubclassOf<UGameplayAbility>> Abilities;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
-	TArray<TSubclassOf<UGameplayAbility>> PassiveAbilities;
+	TMap<TSubclassOf<UGameplayAbility>, EPPAbilityInputID> Abilities;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGameplayEffect> DefaultAttributes;
 
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TMap<TSubclassOf<UGameplayAbility>, FGameplayAbilitySpecHandle> GivenAbilities;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
-	TArray<TSubclassOf<UGameplayEffect>> Effects;
 };

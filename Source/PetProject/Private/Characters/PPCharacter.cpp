@@ -11,6 +11,7 @@
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
 #include "Attributes/PPCharacterSet.h"
+#include "Components/PPHeroComponent.h"
 
 APPCharacter::APPCharacter()
 {
@@ -39,6 +40,8 @@ APPCharacter::APPCharacter()
 
 	CameraLockComponent = CreateDefaultSubobject<UPPCameraLockComponent>(TEXT("CameraLockComponent"));
 
+	HeroComponent = CreateDefaultSubobject<UPPHeroComponent>(TEXT("HeroComponent"));
+
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
 }
@@ -48,6 +51,7 @@ void APPCharacter::PossessedBy(AController* InController)
 	Super::PossessedBy(InController);
 
 	InitAbilitySystem(InController);
+
 	SetupAbilities();
 }
 
@@ -65,16 +69,6 @@ void APPCharacter::InitAbilitySystem(AController* InController)
 	if (IsValid(AbilitySystemComponent))
 	{
 		AbilitySystemComponent->InitAbilityActorInfo(this, this);
-	}
-}
-
-void APPCharacter::GivePassiveAbility(TSubclassOf<UGameplayAbility> InAbility)
-{
-	if (IsValid(AbilitySystemComponent) && IsValid(InAbility))
-	{
-		FGameplayAbilitySpec AbilitySpec(InAbility);
-		FGameplayAbilitySpecHandle AbilitySpecHandle = AbilitySystemComponent->GiveAbilityAndActivateOnce(AbilitySpec);
-		GivenAbilities.Add(InAbility, AbilitySpecHandle);
 	}
 }
 
@@ -99,6 +93,14 @@ void APPCharacter::GetActiveAbilitiesWithTags(FGameplayTagContainer AbilityTagCo
 	}
 }
 
+void APPCharacter::SetupAbilities()
+{
+	for (TPair<TSubclassOf<UGameplayAbility>, EPPAbilityInputID>& Ability : Abilities)
+	{
+		GiveAbility(Ability.Key, 0, static_cast<int32>(Ability.Value));
+	}
+}
+
 TSubclassOf<UGameplayAbility> APPCharacter::GetAbility(EItemType ItemType)
 {
 	UPPInventoryComponent* InventoryComponent = UPPInventoryComponent::GetInventoryComponentFromActor(GetController());
@@ -111,11 +113,11 @@ TSubclassOf<UGameplayAbility> APPCharacter::GetAbility(EItemType ItemType)
 	return TSubclassOf<UGameplayAbility>();
 }
 
-void APPCharacter::GiveAbility(TSubclassOf<UGameplayAbility> InAbility)
+void APPCharacter::GiveAbility(TSubclassOf<UGameplayAbility> InAbility, int32 Level, int32 InputID)
 {
 	if (IsValid(AbilitySystemComponent) && IsValid(InAbility))
 	{
-		FGameplayAbilitySpec AbilitySpec(InAbility);
+		FGameplayAbilitySpec AbilitySpec(InAbility, Level, InputID);
 		FGameplayAbilitySpecHandle AbilitySpecHandle = AbilitySystemComponent->GiveAbility(AbilitySpec);
 		GivenAbilities.Add(InAbility, AbilitySpecHandle);
 	}
@@ -131,81 +133,12 @@ void APPCharacter::RemoveAbility(TSubclassOf<UGameplayAbility> InAbility)
 	}
 }
 
-bool APPCharacter::IsAbilityActive(TSubclassOf<UGameplayAbility> InAbilityClass)
-{
-	if (!IsValid(InAbilityClass) || !IsValid(AbilitySystemComponent))
-	{
-		return false;
-	}
-
-	FGameplayAbilitySpec* Spec = AbilitySystemComponent->FindAbilitySpecFromClass(InAbilityClass);
-
-	if (Spec)
-	{
-		return Spec->IsActive();
-	}
-
-	return false;
-}
-
-void APPCharacter::ActivateAbility(TSubclassOf<UGameplayAbility> InAbility)
-{
-	if (!IsValid(InAbility) || !IsValid(AbilitySystemComponent))
-	{
-		return;
-	}
-
-	FGameplayAbilitySpecHandle* Ability = GivenAbilities.Find(InAbility);
-
-	if (Ability)
-	{
-		AbilitySystemComponent->TryActivateAbility(*Ability);
-	}
-}
-
-void APPCharacter::ActivateAbilityWithTag(FGameplayTagContainer AbilityTagContainer)
-{
-	if (IsValid(AbilitySystemComponent))
-	{
-		AbilitySystemComponent->TryActivateAbilitiesByTag(AbilityTagContainer);
-	}
-}
-
-void APPCharacter::CancelAbility(TSubclassOf<UGameplayAbility> InAbility)
-{
-	if (!IsValid(InAbility) || !IsValid(AbilitySystemComponent))
-	{
-		return;
-	}
-
-	FGameplayAbilitySpecHandle *Ability = GivenAbilities.Find(InAbility);
-
-	if (Ability)
-	{
-		AbilitySystemComponent->CancelAbilityHandle(*Ability);
-	}
-}
-
 void APPCharacter::RemoveAbilities()
 {
 	for (TTuple<TSubclassOf<UGameplayAbility>, FGameplayAbilitySpecHandle>& Ability : GivenAbilities)
 	{
 		AbilitySystemComponent->ClearAbility(Ability.Value);
 	}
-}
-
-void APPCharacter::SetupAbilities()
-{
-	for (TSubclassOf<UGameplayAbility>& Ability : Abilities)
-	{
-		GiveAbility(Ability);
-	}
-
-	for (TSubclassOf<UGameplayAbility>& PassiveAbility : PassiveAbilities)
-	{
-		GivePassiveAbility(PassiveAbility);
-	}
-
 }
 
 UAbilitySystemComponent* APPCharacter::GetAbilitySystemComponent() const
@@ -217,13 +150,8 @@ void APPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	if (IsValid(HeroComponent))
 	{
-		EnhancedInputComponent->BindAction()
-
-		for (auto Ability : Abilities)
-		{
-			AbilitySystemComponent->BindAbiliy
-		}
+		HeroComponent->InitializePlayerInput(PlayerInputComponent);
 	}
 }

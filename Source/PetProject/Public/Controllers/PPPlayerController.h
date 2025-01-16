@@ -25,8 +25,9 @@ protected:
 	
 	virtual void MoveInput(const FInputActionValue& InputActionValue);
 
-	UFUNCTION(BlueprintCallable)
 	virtual void LookInput(const FInputActionValue& InputActionValue);
+
+	virtual void Look_Gamepad(const FInputActionValue& InputActionValue);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
@@ -37,4 +38,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputAction* Look;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* IA_Look_Gamepad;
 };

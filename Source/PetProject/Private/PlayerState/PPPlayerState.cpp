@@ -24,6 +24,23 @@ UPPCharacterSet* APPPlayerState::GetCharacterSet()
 	return CharacterSet;
 }
 
+bool APPPlayerState::IsAbilityActive(TSubclassOf<UGameplayAbility> InAbilityClass) const
+{
+	if (!IsValid(InAbilityClass) || !IsValid(AbilitySystemComponent))
+	{
+		return false;
+	}
+
+	FGameplayAbilitySpec* Spec = AbilitySystemComponent->FindAbilitySpecFromClass(InAbilityClass);
+
+	if (Spec)
+	{
+		return Spec->IsActive();
+	}
+
+	return false;
+}
+
 void APPPlayerState::BeginPlay()
 {
 	Super::BeginPlay();
