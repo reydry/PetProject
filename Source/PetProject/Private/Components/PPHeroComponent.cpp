@@ -2,7 +2,6 @@
 
 
 #include "Components/PPHeroComponent.h"
-#include "Utils/PPUtils.h"
 #include "AbilitySystemComponent.h"
 #include "Characters/PPCharacter.h"
 
@@ -88,7 +87,7 @@ void UPPHeroComponent::AbilityInputReleased(int32 InputID)
 }
 
 template<class UserClass, typename PressedFuncType, typename ReleasedFuncType>
-TArray<FInputBindingHandle> UPPHeroComponent::BindAbilityAction(const FPPAbilityInput InputConfig, UserClass* Object, PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc, UInputComponent* PlayerInputComponent)
+TArray<FInputBindingHandle> UPPHeroComponent::BindAbilityAction(const FPPAbilityInput InInputConfig, UserClass* Object, PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc, UInputComponent* PlayerInputComponent)
 {
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 
@@ -101,12 +100,12 @@ TArray<FInputBindingHandle> UPPHeroComponent::BindAbilityAction(const FPPAbility
 
 	if (ReleasedFunc)
 	{
-		BindingHandles.Add(EnhancedInputComponent->BindAction(InputConfig.InputAction, InputConfig.ReleasedEvent, this, &ThisClass::AbilityInputReleased, static_cast<int32>(InputConfig.AbilityInputID)));
+		BindingHandles.Add(EnhancedInputComponent->BindAction(InInputConfig.InputAction, InInputConfig.ReleasedEvent, this, &ThisClass::AbilityInputReleased, static_cast<int32>(InInputConfig.AbilityInputID)));
 	}
 
 	if (PressedFunc)
 	{
-		BindingHandles.Add(EnhancedInputComponent->BindAction(InputConfig.InputAction, InputConfig.PressedEvent, this, &ThisClass::AbilityInputPressed, static_cast<int32>(InputConfig.AbilityInputID)));
+		BindingHandles.Add(EnhancedInputComponent->BindAction(InInputConfig.InputAction, InInputConfig.PressedEvent, this, &ThisClass::AbilityInputPressed, static_cast<int32>(InInputConfig.AbilityInputID)));
 	}
 
 	return BindingHandles;
