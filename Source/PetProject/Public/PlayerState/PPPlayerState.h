@@ -10,7 +10,6 @@
 
 class UPPCharacterSet;
 class UPPSoulsSet;
-class UPPWeaponSet;
 
 UENUM(BlueprintType)
 enum class EPPTeam : uint8
@@ -20,7 +19,7 @@ enum class EPPTeam : uint8
 	Bot
 };
 
-UCLASS()
+UCLASS(BlueprintType, Blueprintable, notplaceable)
 class PETPROJECT_API APPPlayerState : public APlayerState, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
@@ -29,9 +28,6 @@ public:
 	APPPlayerState(const FObjectInitializer& ObjectInitializer);
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-
-	UFUNCTION(BlueprintPure)
-	UPPCharacterSet* GetCharacterSet();
 
 	UFUNCTION(BlueprintPure)
 	bool IsAbilityActive(TSubclassOf<UGameplayAbility> InAbilityClass) const;
@@ -47,10 +43,4 @@ protected:
 private:
 	UPROPERTY(VisibleAnywhere)
 	UAbilitySystemComponent* AbilitySystemComponent;
-
-	UPROPERTY()
-	UPPCharacterSet* CharacterSet;
-
-	UPROPERTY()
-	UPPWeaponSet* WeaponSet;
 };

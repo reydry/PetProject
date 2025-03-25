@@ -21,6 +21,8 @@ public:
 	ATTRIBUTE_ACCESSORS(UPPWeaponSet, SecondaryAmmo);
 	ATTRIBUTE_ACCESSORS(UPPWeaponSet, MaxSecondaryAmmo);
 
+	ATTRIBUTE_ACCESSORS(UPPWeaponSet, Damage);
+
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
 protected:
@@ -35,5 +37,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FGameplayAttributeData MaxSecondaryAmmo;
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FGameplayAttributeData Damage;
+
 };

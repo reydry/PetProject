@@ -10,18 +10,11 @@
 APPPlayerState::APPPlayerState(const FObjectInitializer& ObjectInitializer)
 {
 	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>("AbilitySystemComponent");
-	CharacterSet = CreateDefaultSubobject<UPPCharacterSet>("CharacterSet");
-	WeaponSet = CreateDefaultSubobject<UPPWeaponSet>("WeaponSet");
 }
 
 UAbilitySystemComponent* APPPlayerState::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
-}
-
-UPPCharacterSet* APPPlayerState::GetCharacterSet()
-{
-	return CharacterSet;
 }
 
 bool APPPlayerState::IsAbilityActive(TSubclassOf<UGameplayAbility> InAbilityClass) const
