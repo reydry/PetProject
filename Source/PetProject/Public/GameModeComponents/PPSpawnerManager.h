@@ -21,6 +21,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnInit();
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SpawnEnemies(int32 EnemiesToSpawn);
+
 protected:
 	virtual void BeginPlay() override;
 
