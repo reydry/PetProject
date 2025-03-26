@@ -7,11 +7,6 @@
 #include "AbilitySystemComponent.h"
 #include "PPCharacterSet.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnHealthChangedDelegateSignature, AActor*, Instigator, float, NewValue, float, MaxValue);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStaminaChangedDelegateSignature, float, NewValue, float, MaxValue);
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnManaChangedDelegateSignature, float, NewValue, float, MaxValue);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLevelUpDelegateSignature);
-
 UCLASS()
 class PETPROJECT_API UPPCharacterSet : public UPPAttributeSet
 {
@@ -35,18 +30,6 @@ public:
 	ATTRIBUTE_ACCESSORS(UPPCharacterSet, Level);
 
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
-
-	UPROPERTY(VisibleAnywhere, BlueprintAssignable)
-	FOnLevelUpDelegateSignature OnLevelUpDelegate;
-
-	UPROPERTY(VisibleAnywhere, BlueprintAssignable)
-	FOnHealthChangedDelegateSignature OnHealthChangedDelegate;
-
-	UPROPERTY(VisibleAnywhere, BlueprintAssignable)
-	FOnStaminaChangedDelegateSignature OnStaminaChangedDelegate;
-
-	UPROPERTY(VisibleAnywhere, BlueprintAssignable)
-	FOnManaChangedDelegateSignature OnManaChangedDelegate;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))

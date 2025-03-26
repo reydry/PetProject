@@ -37,7 +37,7 @@ public:
 
 protected:
 	template<class UserClass, typename PressedFuncType, typename ReleasedFuncType>
-	TArray<FInputBindingHandle> BindAbilityAction(const FPPAbilityInput InputConfig, UserClass* Object, PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc, UInputComponent* PlayerInputComponent);
+	TArray<FInputBindingHandle> BindAbilityAction(const FPPAbilityInput InInputConfig, UserClass* Object, PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc, UInputComponent* PlayerInputComponent);
 
 
 	TMap<EPPAbilityInputID, TArray<FInputBindingHandle>> TemporaryBindings;

@@ -14,5 +14,6 @@ public class PetProjectTarget : TargetRules
 
         DefaultBuildSettings = BuildSettingsVersion.V2;
         bUseLoggingInShipping = true;
+        CppStandard = CppStandardVersion.Cpp20;
     }
 }
