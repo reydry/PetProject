@@ -50,7 +50,7 @@ public:
 	TArray<FPPAbilityInput> Inputs;
 };
 
-UCLASS(BlueprintType)
+UCLASS(BlueprintType, Blueprintable)
 class UPPUtils : public UObject
 {
 	GENERATED_BODY()
