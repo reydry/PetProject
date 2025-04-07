@@ -4,6 +4,10 @@
 #include "UI/PPGameSettingPanel.h"
 #include "CommonInputSubsystem.h"
 #include "CommonInputTypeEnum.h"
+#include "GameUserSettings/PPGameUserSettings.h"
+#include "GameUserSettings/PPGameSetting.h"
+#include "GameUserSettings/PPSettingListEntry_Base.h"
+#include "GameUserSettings/PPGameSettingCollection.h"
 
 UPPGameSettingPanel::UPPGameSettingPanel()
 {
@@ -14,6 +18,23 @@ UPPGameSettingPanel::UPPGameSettingPanel()
 void UPPGameSettingPanel::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+
+	UPPGameUserSettings* UserSettings = UPPGameUserSettings::Get();
+
+	if (IsValid(UserSettings))
+	{
+		UserSettings->LoadSettings();
+
+		GameSettingCollection = UserSettings->GetSettingCollection(CollectionName);
+		
+		if (GameSettingCollection)
+		{
+			for (UPPGameSetting* Setting : GameSettingCollection->GetSettingCollection())
+			{
+				ListView_Settings->AddItem(Setting);
+			}
+		}
+	}
 }
 
 void UPPGameSettingPanel::NativeConstruct()
@@ -42,4 +63,14 @@ FReply UPPGameSettingPanel::NativeOnFocusReceived(const FGeometry& InGeometry, c
 	}
 
 	return FReply::Unhandled();;
+}
+
+FString UPPGameSettingPanel::GetCollectionName()
+{
+	if (GameSettingCollection)
+	{
+		return GameSettingCollection->GetDisplayName();
+	}
+
+	return FString();
 }

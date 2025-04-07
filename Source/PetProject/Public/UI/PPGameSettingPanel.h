@@ -5,8 +5,11 @@
 #include "CoreMinimal.h"
 #include "CommonUserWidget.h"
 #include "CommonActivatableWidget.h"
+#include "CommonListView.h"
 #include "Components/ListView.h"
 #include "PPGameSettingPanel.generated.h"
+
+class UPPGameSettingCollection;
 
 UCLASS()
 class PETPROJECT_API UPPGameSettingPanel : public UCommonActivatableWidget
@@ -25,10 +28,18 @@ public:
 
 	virtual FReply NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent) override;
 
+	UFUNCTION(BlueprintCallable)
+	FString GetCollectionName();
+
 protected:
+
+	UPROPERTY(EditDefaultsOnly)
+	FString CollectionName;
 
 private:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget, BlueprintProtected = true, AllowPrivateAccess = true))
 	TObjectPtr<UListView> ListView_Settings;
 	
+	UPROPERTY()
+	UPPGameSettingCollection* GameSettingCollection;
 };
