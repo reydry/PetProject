@@ -10,7 +10,7 @@ public class PetProject : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "CommonInput" });
 
-		PrivateDependencyModuleNames.AddRange(new string[] {  "GameplayAbilities", "GameplayTags", "GameplayTasks", "AIModule", });
+		PrivateDependencyModuleNames.AddRange(new string[] {  "GameplayAbilities", "GameplayTags", "GameplayTasks", "AIModule", "Slate", "SlateCore", "UMG",});
 
         PublicDefinitions.Add("ALLOW_LOG_FILE=1");
         // Uncomment if you are using Slate UI
