@@ -20,6 +20,7 @@ enum class EPPAbilityInputID
 	Ultimate_Fire,
 	Collect,
 	QuickReload,
+	Interact
 };
 
 USTRUCT()
