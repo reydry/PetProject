@@ -5,6 +5,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/PPHeroComponent.h"
+#include "Components/PPInteractionComponent.h"
+#include "Components/SphereComponent.h"
 
 APPPlayerCharacter::APPPlayerCharacter()
 {
@@ -20,8 +22,9 @@ APPPlayerCharacter::APPPlayerCharacter()
 	TopDownCameraComponent->bUsePawnControlRotation = false;
 
 	CameraLockComponent = CreateDefaultSubobject<UPPCameraLockComponent>(TEXT("CameraLockComponent"));
-
 	HeroComponent = CreateDefaultSubobject<UPPHeroComponent>(TEXT("HeroComponent"));
+	InteractionComponent = CreateDefaultSubobject<UPPInteractionComponent>(TEXT("InteractionComponent"));
+	SphereComponent = CreateDefaultSubobject<USphereComponent>(FName("SphereComponent"));
 }
 
 void APPPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -31,6 +34,19 @@ void APPPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	if (IsValid(HeroComponent))
 	{
 		HeroComponent->InitializePlayerInput(PlayerInputComponent);
+	}
+}
+
+void APPPlayerCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	
+	if (SphereComponent)
+	{
+		SphereComponent->SetSphereRadius(128.0f, true);
+		SphereComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+		SphereComponent->OnComponentBeginOverlap.AddUniqueDynamic(InteractionComponent, &UPPInteractionComponent::OnBeginOverlap);
+		SphereComponent->OnComponentEndOverlap.RemoveDynamic(InteractionComponent, &UPPInteractionComponent::OnEndOverlap);
 	}
 }
 

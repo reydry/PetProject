@@ -16,9 +16,7 @@ class UAbilitySystemComponent;
 class UGameplayAbility;
 class UGameplayEffect;
 class UPPCharacterSet;
-class UPPCameraLockComponent;
 class UInputComponent;
-class UPPHeroComponent;
 class UPPAbilityInputConfig;
 
 UCLASS()
