@@ -11,6 +11,7 @@
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
 #include "Attributes/PPCharacterSet.h"
+#include "Components/PPHeroComponent.h"
 
 APPCharacter::APPCharacter()
 {
@@ -27,6 +28,8 @@ APPCharacter::APPCharacter()
 
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	Inventory = CreateDefaultSubobject<UPPInventoryComponent>(TEXT("Inventory"));
 }
 
 void APPCharacter::PossessedBy(AController* InController)
@@ -127,4 +130,17 @@ void APPCharacter::RemoveAbilities()
 UAbilitySystemComponent* APPCharacter::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
+}
+
+void APPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	if (IsValid(PlayerInputComponent))
+	{
+		UPPHeroComponent* HeroComponent = UPPHeroComponent::GetHeroComponent(this);
+
+		if (IsValid(HeroComponent))
+		{
+			HeroComponent->InitializePlayerInput(PlayerInputComponent);
+		}
+	}
 }
