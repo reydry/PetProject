@@ -30,6 +30,8 @@ public:
 	virtual void PossessedBy(AController* InController) override;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 protected:
 	UFUNCTION(BlueprintCallable)
 	void GiveAbility(TSubclassOf<UGameplayAbility> InAbility, int32 Level, int32 InputID);
@@ -65,4 +67,7 @@ private:
 
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TMap<TSubclassOf<UGameplayAbility>, FGameplayAbilitySpecHandle> GivenAbilities;
+	
+	UPROPERTY()
+	UPPInventoryComponent* Inventory;
 };
